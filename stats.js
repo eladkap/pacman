@@ -29,7 +29,7 @@ class Stats{
     this.levelNum++;
   }
 
-  show(){
+  draw(){
     noStroke();
     textSize(36);
     fill(255);

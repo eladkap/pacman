@@ -3,7 +3,7 @@ class PowerPellet extends Tile{
     super(i, j, x, y, w, col);
   }
 
-  show(){
+  draw(){
     noStroke();
     // if (frameCount % (fps * 0.3)){
       // fill(0);

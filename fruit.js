@@ -5,7 +5,7 @@ class Fruit extends Tile{
     this.setNumber(fruitNum);
   }
 
-  show(){
+  draw(){
     if (this.visible){
       noStroke();
       fill(255);

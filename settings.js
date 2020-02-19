@@ -13,7 +13,24 @@ const FRAME_WIDTH = FRAME_ROWS * TILE_SIZE;
 const FRAME_HEIGHT = FRAME_COLS * TILE_SIZE;
 
 const LERP_UNIT = 0.2; // Linear Interpolation - Animation movement unit
+var LERP_UNIT_GHOST = 0.2;
 
+/* COLORS */
+const BLACK = [0, 0, 0];
+const BLACK1 = [20, 20, 20];
+const WHITE = [255, 255, 255];
+const GRAY1 = [100, 100, 100];
+const GRAY2 = [150, 150, 150];
+const GRAY3 = [200, 200, 200];
+const RED = [220, 0, 0];
+const ORANGE = [255, 150, 50];
+const PINK = [250, 100, 150];
+const YELLOW = [255, 255, 0];
+const GREEN = [0, 250, 0];
+const AQUA = [100, 255, 255];
+const BLUE = [0, 0, 250];
+const PURPLE = [200, 0, 250];
+const NAVY = [0, 0, 128];
 
 var FPS = 30;
 
@@ -34,6 +51,7 @@ const FRUIT_SYMBOLS = ['🍒', '🍓', '🍊', '🍎', '🍈', '🔔', '🔑', '
 const FRUIT_ROW = 11;
 const FRUIT_COL = 9;
 const FRUIT_SHOW_DELAY = 7;
+const DELAY_AFTER_EATING_GHOST = 500;
 
 const GHOST_POINTS = [200, 400, 800, 1600];
 const GHOST_VULNERABILITY_DURATION = 8; // sec
@@ -53,7 +71,7 @@ const TILEMAP = ["1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1",
 	"1 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 1",
 	"1 2 2 2 2 2 0 0 0 0 0 0 0 2 2 2 2 2 2 1",
 	"1 2 1 1 1 1 0 1 1 4 1 1 0 1 1 1 1 1 2 1",
-	"1 2 1 1 1 1 0 1 0 0 0 1 0 1 1 1 1 1 2 1",
+	"1 2 1 1 1 1 0 1 4 4 4 1 0 1 1 1 1 1 2 1",
 	"1 2 1 1 1 1 0 1 1 1 1 1 0 1 1 1 1 1 2 1",
 	"1 2 2 2 2 2 0 0 0 0 0 0 0 2 2 2 2 2 2 1",
 	"1 2 1 1 1 1 2 1 1 1 1 1 2 1 1 1 1 1 2 1",
@@ -65,7 +83,7 @@ const TILEMAP = ["1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1",
 	"1 3 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 1",
 	"1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1"]
 
-const LEVEL_START_NUM = 1; //15 ,9
+const LEVEL_START_NUM = 1;
 
 const TYPES = ['E', 'W', 'D', 'C', 'G', 'P'];
 /*	E - Empty - 0

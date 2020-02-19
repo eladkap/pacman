@@ -80,7 +80,7 @@ class Pacman{
     return 'U';
   }
 
-  show(){
+  draw(){
     noStroke();
     fill(this.col);
     ellipse(this.pos.x + this.r, this.pos.y + this.r, 0.7 * this.w, 0.7 * this.w);

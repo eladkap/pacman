@@ -1,5 +1,5 @@
 class Ghost{
-  constructor(i, j, x, y, w, speed, col){
+  constructor(i, j, x, y, w, speed, col, index){
     this.i = i;
     this.j = j;
     this.pos = createVector(x, y);
@@ -8,8 +8,8 @@ class Ghost{
     this.velocity = createVector(0, 0);
     this.direction = createVector(0, 0);
     this.speed = speed;
-    this.isMoving = false;
     this.col = col;
+    this.index = index;
     this.originalCol = col;
     this.isVulnerable = false;
     this.isBlinking = false;
@@ -17,7 +17,6 @@ class Ghost{
     this.movingCount = 0;
     this.prevDirection = createVector(0, 0);
     this.setRandomDirection(['R', 'L', 'U', 'D']);
-    //this.mat = copyMatrix(stats.level.matrix);
   }
 
   reset(){
@@ -29,11 +28,13 @@ class Ghost{
     this.isVulnerable = b;
     if (b == false){
       this.col = this.originalCol;
-      this.speed *= 2;
+      this.speed *= 1; // 2
+      //LERP_UNIT_GHOST /= 2;
     }
     else{
       this.col = color(0, 0, 120);
-  		this.speed *= 0.5;
+      this.speed *= 1; // 0.5
+      //LERP_UNIT_GHOST *= 2;
     }
   }
 
@@ -49,35 +50,59 @@ class Ghost{
     this.speed = speed;
   }
 
+  canGoRight(){
+    //return this.pos.x > FRAME_X + FRAME_WIDTH - this.w;
+    return this.j < level.matrix[0].length - 1 && level.matrix[this.i][this.j + 1] != 1;
+  }
+
+  canGoLeft(){
+    //return this.pos.x > FRAME_X;
+    return this.j > 0 && level.matrix[this.i][this.j - 1] != 1;
+  }
+
+  canGoUp(){
+    //return this.pos.y > FRAME_Y;
+    return this.i > 0 && level.matrix[this.i - 1][this.j] != 1;
+  }
+
+  canGoDown(){
+    //return this.pos.y < FRAME_Y + FRAME_HEIGHT - this.w;
+    return this.i < level.matrix.length - 1 && level.matrix[this.i + 1][this.j] != 1;
+  }
+
   goRight(){
-    if (this.pos.x < FRAME_X + FRAME_WIDTH - this.w && !this.isMoving){
+    if (this.canGoRight()){
       this.direction.set(1, 0);
-      this.isMoving = true;
+      level.matrix[this.i][this.j] = 0;
       this.j++;
+      level.matrix[this.i][this.j] = this.index;
     }
   }
 
   goLeft(){
-    if (this.pos.x > FRAME_X && !this.isMoving){
+    if (this.canGoLeft()){
       this.direction.set(-1, 0);
-      this.isMoving = true;
+      level.matrix[this.i][this.j] = 0;
       this.j--;
+      level.matrix[this.i][this.j] = this.index;
     }
   }
 
   goUp(){
-    if (this.pos.y > FRAME_Y && !this.isMoving){
+    if (this.canGoUp()){
       this.direction.set(0, -1);
-      this.isMoving = true;
+      level.matrix[this.i][this.j] = 0;
       this.i--;
+      level.matrix[this.i][this.j] = this.index;
     }
   }
 
   goDown(){
-    if (this.pos.y < FRAME_Y + FRAME_HEIGHT - this.w && !this.isMoving){
+    if (this.canGoDown()){
       this.direction.set(0, 1);
-      this.isMoving = true;
+      level.matrix[this.i][this.j] = 0;
       this.i++;
+      level.matrix[this.i][this.j] = this.index;
     }
   }
 
@@ -86,7 +111,7 @@ class Ghost{
     this.velocity.set(0, 0);
   }
 
-  show(){
+  draw(){
     noStroke();
     if (this.isVulnerable){
       fill(this.col);
@@ -95,7 +120,7 @@ class Ghost{
       fill(this.originalCol);
     }
     if (this.isBlinking){
-      if (frameCount % (fps * 0.4)){
+      if (frameCount % (fps * 2)){
         fill(255);
       }
       else{
@@ -105,17 +130,42 @@ class Ghost{
     ellipse(this.pos.x + this.r, this.pos.y + this.r, this.w * 0.7, this.w * 0.7);
   }
 
-  update(){
-    if (this.isMoving){
-      let x = lerp(this.pos.x, this.pos.x + this.direction.x * this.speed, LERP_UNIT);
-      let y = lerp(this.pos.y, this.pos.y + this.direction.y * this.speed, LERP_UNIT);
-      this.pos.set(x, y);
-      this.movingCount++;
-      if (this.movingCount == 1 / LERP_UNIT){
-        this.updateIndex();
-        this.movingCount = 0;
-        this.isMoving = false;
-        this.prevDirection = this.direction;
+  setNewDirection(){
+    let options = [];
+    if (this.canGoRight()){
+      options.push('R');
+    }
+    if (this.canGoLeft()){
+      options.push('L');
+    } 
+    if (this.canGoUp()){
+      options.push('U');
+    }
+    if (this.canGoDown()){
+      options.push('D');
+    }
+    this.setRandomDirection(options);
+  }
+
+  canGoSameDirection(){
+    let rightCond = this.direction.x == 1 && this.direction.y == 0 && this.canGoRight();
+    let leftCond = this.direction.x == -1 && this.direction.y == 0 && this.canGoLeft();
+    let upCond = this.direction.x == 0 && this.direction.y == -1 && this.canGoUp();
+    let downCond = this.direction.x == 0 && this.direction.y == 1 && this.canGoDown();
+    return rightCond || leftCond || upCond || downCond;
+  }
+
+  update(){ 
+    let x = lerp(this.pos.x, this.pos.x + this.direction.x * this.speed, LERP_UNIT);
+    let y = lerp(this.pos.y, this.pos.y + this.direction.y * this.speed, LERP_UNIT);
+    this.pos.set(x, y);
+    this.movingCount++;
+    if (this.movingCount == 1 / LERP_UNIT){
+      this.updateIndex();
+      this.movingCount = 0;
+      this.prevDirection = this.direction;
+      if (!this.canGoSameDirection()){
+        this.setNewDirection(); 
       }
     }
   }
@@ -125,27 +175,34 @@ class Ghost{
     this.i += this.direction.y;
   }
 
+  setLocationRowCol(rowIndex, colIndex){
+    this.i = rowIndex;
+    this.j = colIndex;
+    this.pos.x = FRAME_X + colIndex * TILE_SIZE;
+    this.pos.y = FRAME_Y + rowIndex * TILE_SIZE;
+  }
+
   setLocation(x, y){
     this.pos.set(x, y);
   }
 
   setRandomDirection(options){
-    let d = int(random(0, options.length - 1));
-    if (options[d] == 'R'){
-      // this.direction.set(1, 0);
-      this.goRight();
+    let d = random(options);
+    if (d == 'R'){
+      this.direction.set(1, 0);
+      //this.goRight();
     }
-    else if (options[d] == 'L'){
-      // this.direction.set(-1, 0);
-      this.goLeft();
+    else if (d == 'L'){
+      this.direction.set(-1, 0);
+      //this.goLeft();
     }
-    else if (options[d] == 'D'){
-      // this.direction.set(0, 1);
-      this.goDown();
+    else if (d == 'D'){
+      this.direction.set(0, 1);
+      //this.goDown();
     }
-    else{
-      // this.direction.set(0, -1);
-      this.goUp();
+    else if (d == 'U'){
+      this.direction.set(0, -1);
+      //this.goUp();
     }
   }
 

@@ -1,3 +1,4 @@
+var fps;
 var pacman;
 var ghosts;
 var walls;
@@ -29,7 +30,8 @@ function preload(){
 
 function setup() {
 	createCanvas(SCREEN_WIDTH, SCREEN_HEIGHT + STATS_HEIGHT);
-	frameRate(FPS);
+	fps = FPS;
+	frameRate(fps);
 	setLevel();
 	setStats();
 	setFruit();
@@ -38,21 +40,21 @@ function setup() {
 function draw() {
 	background(0);
 	drawFrame();
-	stats.show();
-	fruit.show();
-	pacman.show();
+	stats.draw();
+	fruit.draw();
+	pacman.draw();
 	pacman.update();
-	displayWalls();
-	displayDots();
-	displayPowerPellets();
-	//displayGhosts();
+	drawWalls();
+	drawDots();
+	drawPowerPellets();
+	drawGhosts();
 	//moveGhosts();
 
 	checkPacmanEatDot();
 	checkPacmanEatPowerPellet();
 	checkPacmanEatFruit();
 	checkPacmanGhostCollision();
-	//handleGhostsVulnerability();
+	handleGhostsVulnerability();
 	handleFruitTimer();
 
 	checkKeyIsDown();
@@ -80,6 +82,7 @@ function handleGhostsVulnerability(){
 	if (ghosts[0].isVulnerable && !recoveryMode){
 		if (frameCount % FPS == 0){
 			vulnerabilityTimer++;
+			console.log(vulnerabilityTimer);
 		}
 		if (vulnerabilityTimer >= GHOST_VULNERABILITY_DURATION){
 			recoverGhosts();
@@ -99,7 +102,7 @@ function handleGhostsVulnerability(){
 }
 
 function handleFruitTimer(){
-	if (frameCount % FPS == 0){
+	if (frameCount % fps == 0){
 		fruitTimer++;
 		if (fruitTimer == FRUIT_SHOW_DELAY){
 			fruitTimer = 0;
@@ -109,28 +112,28 @@ function handleFruitTimer(){
 	}
 }
 
-function displayWalls(){
+function drawWalls(){
 	for (let wall of walls){
 		wall.show();
 	}
 }
 
-function displayDots(){
+function drawDots(){
 	for (let dot of dots){
-		dot.show();
+		dot.draw();
 	}
 }
 
-function displayPowerPellets(){
+function drawPowerPellets(){
 	for (let pellet of powerPellets){
-		pellet.show();
+		pellet.draw();
 	}
 }
 
-function displayGhosts(){
+function drawGhosts(){
 	for (let ghost of ghosts){
-		ghost.show();
-		// ghost.update();
+		ghost.draw();
+		ghost.update();
 	}
 }
 
@@ -157,7 +160,7 @@ function setLevel(){
 	for (let i = 0; i < level.matrix.length; i++){
 		for (let j = 0; j < level.matrix[i].length; j++){
 			if (level.matrix[i][j] == 1){
-				let wall = new Wall(i, j, 0, 0, TILE_SIZE, color(65, 105, 225));
+				let wall = new Wall(i, j, 0, 0, TILE_SIZE, BLUE);
 				wall.setLocation(FRAME_X + j * TILE_SIZE, FRAME_Y + i * TILE_SIZE);
 				walls.push(wall);
 			}
@@ -167,7 +170,7 @@ function setLevel(){
 				dots.push(dot);
 			}
 			else if (level.matrix[i][j] == 3){
-				pellet = new PowerPellet(i, j, 0, 0, TILE_SIZE, color(220));
+				pellet = new PowerPellet(i, j, 0, 0, TILE_SIZE, color(GRAY3));
 				pellet.setLocation(FRAME_X + j * TILE_SIZE, FRAME_Y + i * TILE_SIZE);
 				powerPellets.push(pellet);
 			}
@@ -175,32 +178,32 @@ function setLevel(){
 				let ghost_x = FRAME_X + j * TILE_SIZE;
 				let ghost_y = FRAME_Y + i * TILE_SIZE;
 				if (ghostNum == 0){
-					ghostColor = color(220, 0, 0);
+					ghostColor = RED;
 				}
 				else if (ghostNum == 1){
-					ghostColor = color(0, 255, 255);
+					ghostColor = PINK;
 				}
 				else if (ghostNum == 2){
-					ghostColor = color(255, 192, 203);
+					ghostColor = ORANGE;
 				}
 				else{
-					ghostColor = color(204, 204, 0);
+					ghostColor = AQUA;
 				}
-				ghost = new Ghost(i, j, ghost_x, ghost_y, TILE_SIZE, GHOST_SPEED, ghostColor);
+				ghost = new Ghost(i, j, ghost_x, ghost_y, TILE_SIZE, GHOST_SPEED, ghostColor, 4);
 				ghosts.push(ghost);
 				ghostNum++;
 			}
 			else if (level.matrix[i][j] == 5){
 				let pacman_x = FRAME_X + j * TILE_SIZE;
 				let pacman_y = FRAME_Y + i * TILE_SIZE;
-				pacman = new Pacman(i, j, pacman_x, pacman_y, TILE_SIZE, PACMAN_SPEED, color(255, 255, 0));
+				pacman = new Pacman(i, j, pacman_x, pacman_y, TILE_SIZE, PACMAN_SPEED, YELLOW);
 			}
 		}
 	}
 }
 
 function setFruit(){
-	fruit = new Fruit(0, 0, 0, 0, TILE_SIZE, color(255), currLevelIndex);
+	fruit = new Fruit(0, 0, 0, 0, TILE_SIZE, color(WHITE), currLevelIndex);
 	fruit.setLocationRowCol(FRUIT_ROW, FRUIT_COL);
 	fruit.setVisible(false);
 }
@@ -295,7 +298,7 @@ function checkPacmanEatDot(){
 		if (pacman.collide(dots[i])){
 			dots.splice(i, 1);
 			stats.increaseScore(DOT_PTS);
-			if (dots.length == 100){
+			if (dots.length == 0){
 				levelCompleted();
 				print("Level completed");
 			}
@@ -338,15 +341,22 @@ function checkPacmanEatFruit(){
 	}
 }
 
-function checkPacmanGhostCollision(){
+async function checkPacmanGhostCollision(){
 	for (let ghost of ghosts){
 		if (pacman.collide(ghost)){
 			if (ghost.isVulnerable){
+				let gx = ghost.pos.x;
+				let gy = ghost.pos.y;
+				console.log(GHOST_POINTS[eatenGhostNum]);
 				stats.increaseScore(GHOST_POINTS[eatenGhostNum]);
 				let ghost_x = FRAME_X + 9 * TILE_SIZE;
-		    let ghost_y = FRAME_Y + 9 * TILE_SIZE;
-				ghost.setLocation(ghost_x, ghost_y);
+				let ghost_y = FRAME_Y + 9 * TILE_SIZE;
+				ghost.setLocationRowCol(9, 9);
+				displayMessage(GHOST_POINTS[eatenGhostNum], gx, gy, GRAY3, 16);
 				eatenGhostNum++;
+				noLoop();
+				await sleep(DELAY_AFTER_EATING_GHOST);
+				loop();
 			}
 			else{
 				gameOver();
@@ -356,6 +366,7 @@ function checkPacmanGhostCollision(){
 }
 
 function recoverGhosts(){
+	eatenGhostNum = 0;
 	for (let ghost of ghosts){
 		// ghost.setVulnerable(false);
 		ghost.setBlinking(true);

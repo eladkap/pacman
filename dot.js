@@ -3,7 +3,7 @@ class Dot extends Tile{
     super(i, j, x, y, w, col);
   }
 
-  show(){
+  draw(){
     noStroke();
     fill(this.col);
     ellipse(this.pos.x + this.r, this.pos.y + this.r, 0.1 * this.w, 0.1 * this.w);
