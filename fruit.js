@@ -1,12 +1,12 @@
-class Fruit extends Tile{
-  constructor(i, j, x, y, w, col, fruitNum){
+class Fruit extends Tile {
+  constructor(i, j, x, y, w, col, fruitNum) {
     super(i, j, x, y, w, col);
     this.fruitNum = fruitNum;
     this.setNumber(fruitNum);
   }
 
-  draw(){
-    if (this.visible){
+  draw() {
+    if (this.visible) {
       noStroke();
       fill(255);
       textSize(this.w * 0.6);
@@ -14,13 +14,13 @@ class Fruit extends Tile{
     }
   }
 
-  setNumber(fruitNum){
+  setNumber(fruitNum) {
     this.name = FRUIT_NAMES[fruitNum];
     this.symbol = FRUIT_SYMBOLS[fruitNum];
     this.pts = FRUIT_POINTS[fruitNum];
   }
 
-  setRandomLocation(){
+  setRandomLocation() {
     let optionalRows = [1, 4, 7, 12];
     let row_index = int(random(0, optionalRows.length - 1));
     let col_index = int(random(1, FRAME_COLS - 1));

@@ -1,5 +1,5 @@
-class Stats{
-  constructor(x, y, w, h, lives){
+class Stats {
+  constructor(x, y, w, h, lives) {
     this.x = x;
     this.y = y;
     this.width = w;
@@ -8,31 +8,36 @@ class Stats{
     this.totalScore = 0;
     this.lives = lives;
     this.levelNum = 1;
+    this.msg = "-";
   }
 
-  reset(){
+  reset() {
     this.score = 0;
     this.lives = MAX_LIVES;
     //this.level = levels[0];
   }
 
-  increaseScore(amount){
+  increaseScore(amount) {
     this.score += amount;
   }
 
-  decreaseLives(){
+  decreaseLives() {
     this.lives -= 1;
   }
 
-  nextLevel(){
+  nextLevel() {
     this.totalScore += this.score;
     this.levelNum++;
   }
 
-  draw(){
+  draw() {
     noStroke();
     textSize(36);
     fill(255);
-    text(`Time: --\t\tLevel: ${this.levelNum}\t\tScore: ${this.score}\t\t Lives: ${this.lives}\t\t${fruit.symbol}`, this.x, this.y);
+    text(
+      `Time: --\t\tLevel: ${this.levelNum}\t\tScore: ${this.score}\t\t Lives: ${this.lives}\t\t${fruit.symbol}\t\t${this.msg}`,
+      this.x,
+      this.y
+    );
   }
 }

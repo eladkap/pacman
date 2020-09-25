@@ -1,5 +1,5 @@
-class Tile{
-  constructor(i, j, x, y, w, col){
+class Tile {
+  constructor(i, j, x, y, w, col) {
     this.pos = createVector(x, y);
     this.w = w;
     this.r = w / 2;
@@ -13,20 +13,20 @@ class Tile{
   //   ellipse(this.pos.x, this.pos.y, this.w / 6, this.w / 6);
   // }
 
-  setVisible(value){
+  setVisible(value) {
     this.visible = value;
   }
 
-  setLocation(x, y){
+  setLocation(x, y) {
     this.pos.set(x, y);
   }
 
-  setLocationRowCol(rowIndex, colIndex){
+  setLocationRowCol(rowIndex, colIndex) {
     this.pos.x = FRAME_X + colIndex * TILE_SIZE;
     this.pos.y = FRAME_Y + rowIndex * TILE_SIZE;
   }
 
-  changeLocation(){
+  changeLocation() {
     this.pos.x = FRAME_X + int(random(0, FRAME_COLS)) * TILE_SIZE;
     this.pos.y = FRAME_Y + int(random(0, FRAME_ROWS)) * TILE_SIZE;
   }
