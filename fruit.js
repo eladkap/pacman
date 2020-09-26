@@ -6,6 +6,10 @@ class Fruit extends Tile {
     this.points = points;
   }
 
+  get Points() {
+    return this.points;
+  }
+
   Draw() {
     if (this.visible) {
       noStroke();
