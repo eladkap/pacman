@@ -1,33 +1,67 @@
 class Tile {
-  constructor(i, j, x, y, w, col) {
-    this.pos = createVector(x, y);
-    this.w = w;
-    this.r = w / 2;
+  constructor(row, col, x, y, width, color) {
+    this.row = row;
     this.col = col;
+    this.pos = createVector(x, y);
+    this.width = width;
+    this.radius = width / 2;
+    this.color = color;
     this.visible = true;
   }
 
-  // show(){
-  //   noStroke();
-  //   fill(this.col);
-  //   ellipse(this.pos.x, this.pos.y, this.w / 6, this.w / 6);
-  // }
+  //#region Properties
+  get Row() {
+    return this.row;
+  }
 
-  setVisible(value) {
+  get Col() {
+    return this.row;
+  }
+
+  get Position() {
+    return this.pos;
+  }
+
+  get Width() {
+    return this.width;
+  }
+
+  get Radius() {
+    return this.radius;
+  }
+
+  get Color() {
+    return this.color;
+  }
+
+  get Visible() {
+    return this.visible;
+  }
+  //#endregion
+
+  //#region Methods
+  SetColor(color) {
+    this.color = color;
+  }
+
+  SetVisible(value) {
     this.visible = value;
   }
 
-  setLocation(x, y) {
+  SetPosition(x, y) {
     this.pos.set(x, y);
   }
 
-  setLocationRowCol(rowIndex, colIndex) {
-    this.pos.x = FRAME_X + colIndex * TILE_SIZE;
-    this.pos.y = FRAME_Y + rowIndex * TILE_SIZE;
+  SetPositionRowCol(row, col) {
+    this.row = row;
+    this.col = col;
+    this.pos.x = FRAME_X + col * this.width;
+    this.pos.y = FRAME_Y + row * this.width;
   }
 
-  changeLocation() {
-    this.pos.x = FRAME_X + int(random(0, FRAME_COLS)) * TILE_SIZE;
-    this.pos.y = FRAME_Y + int(random(0, FRAME_ROWS)) * TILE_SIZE;
+  SetRandomPositionRowCol() {
+    this.pos.x = FRAME_X + int(random(0, FRAME_COLS)) * this.width;
+    this.pos.y = FRAME_Y + int(random(0, FRAME_ROWS)) * this.width;
   }
 }
+//#endregion

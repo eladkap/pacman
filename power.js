@@ -1,21 +1,16 @@
 class PowerPellet extends Tile {
-  constructor(i, j, x, y, w, col) {
-    super(i, j, x, y, w, col);
+  constructor(row, col, x, y, width, color) {
+    super(row, col, x, y, width, color);
   }
 
-  draw() {
+  Draw() {
     noStroke();
-    // if (frameCount % (fps * 0.3)){
-    // fill(0);
-    // }
-    // else{
-    fill(this.col);
-    // }
+    fill(this.color);
     ellipse(
-      this.pos.x + this.r,
-      this.pos.y + this.r,
-      this.w * 0.5,
-      this.w * 0.5
+      this.pos.x + this.radius,
+      this.pos.y + this.radius,
+      this.radius,
+      this.radius
     );
   }
 }

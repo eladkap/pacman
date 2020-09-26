@@ -44,19 +44,16 @@ const PACMAN_COL = 9;
 const DOT_PTS = 10;
 const POWER_PTS = 50;
 
-const FRUITS_NUM = 7;
-const FRUIT_POINTS = [100, 300, 500, 700, 1000, 3000, 5000, 0];
-const FRUIT_NAMES = [
-  "Cherry",
-  "Strawberry",
-  "Orange",
-  "Apple",
-  "Melon",
-  "Bell",
-  "Key",
-  "-",
+const FRUIT_DICT = [
+  { symbol: "🍒", name: "Cherry", points: 100 },
+  { symbol: "🍓", name: "Strawberry", points: 300 },
+  { symbol: "🍊", name: "Orange", points: 500 },
+  { symbol: "🍎", name: "Apple", points: 700 },
+  { symbol: "🍈", name: "Melon", points: 1000 },
+  { symbol: "🔔", name: "Bell", points: 3000 },
+  { symbol: "🔑", name: "Key", points: 5000 },
 ];
-const FRUIT_SYMBOLS = ["🍒", "🍓", "🍊", "🍎", "🍈", "🔔", "🔑", "-"];
+
 const FRUIT_ROW = 11;
 const FRUIT_COL = 9;
 const FRUIT_SHOW_DELAY = 7;

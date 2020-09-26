@@ -1,16 +1,16 @@
 class Dot extends Tile {
-  constructor(i, j, x, y, w, col) {
-    super(i, j, x, y, w, col);
+  constructor(row, col, x, y, width, color) {
+    super(row, col, x, y, width, color);
   }
 
-  draw() {
+  Draw() {
     noStroke();
-    fill(this.col);
+    fill(this.color);
     ellipse(
-      this.pos.x + this.r,
-      this.pos.y + this.r,
-      0.1 * this.w,
-      0.1 * this.w
+      this.pos.x + this.radius,
+      this.pos.y + this.radius,
+      0.1 * this.width,
+      0.1 * this.width
     );
   }
 }

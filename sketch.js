@@ -4,12 +4,14 @@ var ghosts;
 var walls;
 var dots;
 var powerPellets;
-var fruit;
+var fruits;
+var currentFruit;
 
 var eatenGhostNum = 0;
 
 var gameIsOver = false;
 var gameIsPaused = false;
+var gameIsFinished = false;
 var isLevelCompleted = false;
 
 var tileMap;
@@ -33,20 +35,20 @@ function setup() {
   frameRate(fps);
   setLevel();
   setStats();
-  setFruit();
+  SetFruits();
 }
 
 function draw() {
   background(0);
   drawFrame();
   stats.draw();
-  fruit.draw();
+  currentFruit.Draw();
   pacman.draw();
   pacman.update();
-  drawWalls();
-  drawDots();
-  drawPowerPellets();
-  drawGhosts();
+  DrawWalls();
+  DrawDots();
+  DrawPowerPellets();
+  // drawGhosts();
   //   moveGhosts();
 
   checkPacmanEatDot();
@@ -108,27 +110,27 @@ function handleFruitTimer() {
     fruitTimer++;
     if (fruitTimer == FRUIT_SHOW_DELAY) {
       fruitTimer = 0;
-      fruit.setVisible(true);
+      currentFruit.SetVisible(true);
       print("show fruit");
     }
   }
 }
 
-function drawWalls() {
+function DrawWalls() {
   for (let wall of walls) {
-    wall.show();
+    wall.Draw();
   }
 }
 
-function drawDots() {
+function DrawDots() {
   for (let dot of dots) {
-    dot.draw();
+    dot.Draw();
   }
 }
 
-function drawPowerPellets() {
+function DrawPowerPellets() {
   for (let pellet of powerPellets) {
-    pellet.draw();
+    pellet.Draw();
   }
 }
 
@@ -162,15 +164,15 @@ function setLevel() {
     for (let j = 0; j < level.matrix[i].length; j++) {
       if (level.matrix[i][j] == TILE_WALL) {
         let wall = new Wall(i, j, 0, 0, TILE_SIZE, BLUE);
-        wall.setLocation(FRAME_X + j * TILE_SIZE, FRAME_Y + i * TILE_SIZE);
+        wall.SetPosition(FRAME_X + j * TILE_SIZE, FRAME_Y + i * TILE_SIZE);
         walls.push(wall);
       } else if (level.matrix[i][j] == TILE_DOT) {
         dot = new Dot(i, j, 0, 0, TILE_SIZE, color(255));
-        dot.setLocation(FRAME_X + j * TILE_SIZE, FRAME_Y + i * TILE_SIZE);
+        dot.SetPosition(FRAME_X + j * TILE_SIZE, FRAME_Y + i * TILE_SIZE);
         dots.push(dot);
       } else if (level.matrix[i][j] == TILE_POWER) {
         pellet = new PowerPellet(i, j, 0, 0, TILE_SIZE, color(GRAY3));
-        pellet.setLocation(FRAME_X + j * TILE_SIZE, FRAME_Y + i * TILE_SIZE);
+        pellet.SetPosition(FRAME_X + j * TILE_SIZE, FRAME_Y + i * TILE_SIZE);
         powerPellets.push(pellet);
       } else if (
         [TILE_GHOST1, TILE_GHOST2, TILE_GHOST3, TILE_GHOST4].includes(
@@ -217,10 +219,25 @@ function setLevel() {
   }
 }
 
-function setFruit() {
-  fruit = new Fruit(0, 0, 0, 0, TILE_SIZE, color(WHITE), currLevelIndex);
-  fruit.setLocationRowCol(FRUIT_ROW, FRUIT_COL);
-  fruit.setVisible(false);
+function SetFruits() {
+  fruits = [];
+  for (let friutObj of FRUIT_DICT) {
+    let fruit = new Fruit(
+      0,
+      0,
+      0,
+      0,
+      TILE_SIZE,
+      color(WHITE),
+      friutObj.name,
+      friutObj.symbol,
+      friutObj.points
+    );
+    fruit.SetPositionRowCol(FRUIT_ROW, FRUIT_COL);
+    fruits.push(fruit);
+    currentFruit = fruits[0];
+    currentFruit.SetVisible(false);
+  }
 }
 
 function gameOver() {
@@ -236,14 +253,15 @@ function gameOver() {
 function levelCompleted() {
   displayLevelCompleted();
   isLevelCompleted = true;
-  noLoop();
 }
 
 function displayLevelCompleted() {
+  console.log("Level completed.");
   let msg_x = SCREEN_WIDTH / 2 - 100;
   let msg_y = SCREEN_HEIGHT / 2;
   let msg = "Level completed. Press ENTER for level " + (currLevelIndex + 2);
   displayMessage(msg, msg_x, msg_y, color(0, 255, 0), 24);
+  noLoop();
 }
 
 function displayMessage(msg, x, y, col, font_size) {
@@ -287,13 +305,14 @@ function pauseResumeGame() {
 }
 
 function setNextLevel() {
-  stats.nextLevel();
-  setLevel();
   currLevelIndex++;
-  if (currLevelIndex == FRUITS_NUM) {
+  if (currLevelIndex == fruits.length) {
     finishGame();
   } else {
-    fruit.setNumber(currLevelIndex);
+    stats.SetNextLevel();
+    setLevel();
+    isLevelCompleted = false;
+    currentFruit = fruits[currLevelIndex];
     loop();
   }
 }
@@ -302,6 +321,7 @@ function finishGame() {
   let msg_x = SCREEN_WIDTH / 2 - 100;
   let msg_y = SCREEN_HEIGHT / 2;
   let msg = "Game Finished";
+  gameIsFinished = true;
   displayMessage(msg, msg_x, msg_y, color(0, 255, 0), 24);
   noLoop();
 }
@@ -311,9 +331,8 @@ function checkPacmanEatDot() {
     if (pacman.collide(dots[i])) {
       dots.splice(i, 1);
       stats.increaseScore(DOT_PTS);
-      if (dots.length == 0) {
+      if (dots.length == 120) {
         levelCompleted();
-        print("Level completed");
       }
     }
   }
@@ -347,9 +366,9 @@ function setGhostsInvulnerable() {
 }
 
 function checkPacmanEatFruit() {
-  if (pacman.collide(fruit)) {
-    stats.increaseScore(fruit.pts);
-    fruit.setVisible(false);
+  if (pacman.collide(currentFruit)) {
+    stats.increaseScore(currentFruit.points);
+    currentFruit.SetVisible(false);
     fruitTimer = 0;
   }
 }
@@ -368,7 +387,7 @@ async function checkPacmanGhostCollision() {
         displayMessage(GHOST_POINTS[eatenGhostNum], gx, gy, GRAY3, 16);
         eatenGhostNum++;
         noLoop();
-        await sleep(DELAY_AFTER_EATING_GHOST);
+        await Sleep(DELAY_AFTER_EATING_GHOST);
         loop();
       } else {
         gameOver();

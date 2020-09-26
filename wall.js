@@ -1,15 +1,11 @@
-class Wall extends Tile{
-  constructor(i, j, x, y, w, col){
-    super(i, j, x, y, w, col);
+class Wall extends Tile {
+  constructor(row, col, x, y, width, color) {
+    super(row, col, x, y, width, color);
   }
 
-  show(){
-    // strokeWeight(1);
-    // stroke(65, 105, 225);
-    // fill(0);
-    // rect(this.pos.x, this.pos.y, this.w, this.w);
+  Draw() {
     noStroke();
-    fill(this.col);
-    rect(this.pos.x, this.pos.y, this.w, this.w);
+    fill(this.color);
+    rect(this.pos.x, this.pos.y, this.width, this.width);
   }
 }
