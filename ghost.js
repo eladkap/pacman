@@ -13,6 +13,7 @@ class Ghost {
     this.index = index;
     this.originalCol = col;
     this.isVulnerable = false;
+    this.visible = true;
     this.isBlinking = false;
     this.isEaten = false;
     this.movingCount = 0;
@@ -23,6 +24,10 @@ class Ghost {
   reset() {
     this.isVulnerable = false;
     this.isEaten = false;
+  }
+
+  get Visible() {
+    return this.visible;
   }
 
   setVulnerable(b) {

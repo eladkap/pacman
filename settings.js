@@ -12,7 +12,7 @@ const FRAME_COLS = 20;
 const FRAME_WIDTH = FRAME_ROWS * TILE_SIZE;
 const FRAME_HEIGHT = FRAME_COLS * TILE_SIZE;
 
-const LERP_UNIT = 0.2; // Linear Interpolation - Animation movement unit
+var LERP_UNIT = 0.2; // Linear Interpolation - Animation movement unit
 var LERP_UNIT_GHOST = 0.2;
 
 /* COLORS */
@@ -62,9 +62,18 @@ const DELAY_AFTER_EATING_GHOST = 500;
 const GHOST_POINTS = [200, 400, 800, 1600];
 const GHOST_VULNERABILITY_DURATION = 8; // sec
 const GHOST_BLINKING_DURATION = 5; // sec
+const READY_DELAY_MS = 3000; // ms
 
 const STATS_HEIGHT = 200;
 const MAX_LIVES = 3;
+
+/* Game States */
+const GAME_READY = 0;
+const GAME_PLAY = 1;
+const GAME_LEVEL_COMPLETED = 2;
+const GAME_OVER = 3;
+const GAME_PAUSED = 4;
+const GAME_FINISHED = 5;
 
 const LEVEL_FILE_PATH = "levels/levels.txt";
 
@@ -78,30 +87,7 @@ const TILE_GHOST2 = 6;
 const TILE_GHOST3 = 7;
 const TILE_GHOST4 = 8;
 
-const TILEMAP = [
-  "1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1",
-  "1 3 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 1",
-  "1 2 1 1 1 1 2 1 1 1 1 1 1 2 1 1 1 1 2 1",
-  "1 2 1 1 1 1 2 1 1 1 1 1 1 2 1 1 1 1 2 1",
-  "1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1",
-  "1 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 1",
-  "1 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 1",
-  "1 2 2 2 2 2 0 0 0 0 0 0 0 2 2 2 2 2 2 1",
-  "1 2 1 1 1 1 0 1 1 1 8 1 0 1 1 1 1 1 2 1",
-  "1 2 1 1 1 1 0 1 5 6 7 1 0 1 1 1 1 1 2 1",
-  "1 2 1 1 1 1 0 1 1 1 1 1 0 1 1 1 1 1 2 1",
-  "1 2 2 2 2 2 0 0 0 0 0 0 0 2 2 2 2 2 2 1",
-  "1 2 1 1 1 1 2 1 1 1 1 1 2 1 1 1 1 1 2 1",
-  "1 2 1 1 1 1 2 1 1 1 1 1 2 1 1 1 1 1 2 1",
-  "1 2 1 1 1 1 2 1 1 1 1 1 2 1 1 1 1 1 2 1",
-  "1 2 2 2 2 2 2 2 2 4 2 2 2 2 2 2 2 2 2 1",
-  "1 2 1 1 1 1 2 1 1 1 1 1 2 1 1 1 1 1 2 1",
-  "1 2 1 1 1 1 2 1 1 1 1 1 2 1 1 1 1 1 2 1",
-  "1 3 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 1",
-  "1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1",
-];
-
-const LEVEL_START_NUM = 1;
+// const LEVEL_START_NUM = 1;
 
 const TYPES = ["E", "W", "D", "C", "G", "P"];
 /*	E - Empty - 0

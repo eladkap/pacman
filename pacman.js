@@ -123,6 +123,6 @@ class Pacman {
 
   collide(entity) {
     var d = dist(this.pos.x, this.pos.y, entity.pos.x, entity.pos.y);
-    return d < 1;
+    return d < 1 && entity.Visible;
   }
 }

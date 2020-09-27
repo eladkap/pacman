@@ -9,10 +9,11 @@ var currentFruit;
 
 var eatenGhostNum = 0;
 
-var gameIsOver = false;
-var gameIsPaused = false;
-var gameIsFinished = false;
-var isLevelCompleted = false;
+var gameStatus;
+// var gameIsOver = false;
+// var gameIsPaused = false;
+// var gameIsFinished = false;
+// var isLevelCompleted = false;
 
 var tileMap;
 var stats;
@@ -24,9 +25,12 @@ var recoveryTimer = 0;
 var fruitTimer = 0;
 var recoveryMode = false;
 
+function LoadTileMap() {
+  tileMap = ReadTextFile("tilemap.txt");
+}
+
 function preload() {
-  //tileMap = loadStrings('tilemap.txt');
-  tileMap = TILEMAP;
+  LoadTileMap();
 }
 
 function setup() {
@@ -36,9 +40,11 @@ function setup() {
   setLevel();
   setStats();
   SetFruits();
+  gameStatus = GAME_READY;
+  noLoop();
 }
 
-function draw() {
+async function draw() {
   background(0);
   drawFrame();
   stats.draw();
@@ -50,6 +56,15 @@ function draw() {
   DrawPowerPellets();
   // drawGhosts();
   //   moveGhosts();
+
+  if (gameStatus == GAME_READY) {
+    console.log("Game ready.");
+    DisplayReady();
+    await Sleep(READY_DELAY_MS);
+    gameStatus = GAME_PLAY;
+    console.log("Game started.");
+    loop();
+  }
 
   checkPacmanEatDot();
   checkPacmanEatPowerPellet();
@@ -64,8 +79,8 @@ function draw() {
 function resetGame() {
   print("Reset game");
   gameIsOver = false;
-  tileMap = TILEMAP;
-  setLevel(tileMap);
+  LoadTileMap();
+  setLevel();
   stats.reset();
   pacman.stop();
   loop();
@@ -73,7 +88,9 @@ function resetGame() {
 
 function resetRound() {
   print("Reset round");
-  gameIsOver = false;
+  gameStatus = GAME_PLAY;
+  currentFruit.SetVisible(false);
+  fruitTimer = 0;
   pacman.stop();
   pacman.setLocationRowCol(PACMAN_ROW, PACMAN_COL);
   for (let ghost of ghosts) {
@@ -86,7 +103,6 @@ function handleGhostsVulnerability() {
   if (ghosts[0].isVulnerable && !recoveryMode) {
     if (frameCount % FPS == 0) {
       vulnerabilityTimer++;
-      console.log(vulnerabilityTimer);
     }
     if (vulnerabilityTimer >= GHOST_VULNERABILITY_DURATION) {
       recoverGhosts();
@@ -147,7 +163,7 @@ function setStats() {
 
 function drawFrame() {
   strokeWeight(1);
-  stroke(65, 105, 225);
+  stroke(NAVY);
   noFill();
   rect(FRAME_X, FRAME_Y, FRAME_WIDTH, FRAME_HEIGHT);
 }
@@ -260,56 +276,58 @@ function gameOver() {
 
 function levelCompleted() {
   displayLevelCompleted();
-  isLevelCompleted = true;
+  gameStatus = GAME_LEVEL_COMPLETED;
 }
 
 function displayLevelCompleted() {
   console.log("Level completed.");
-  let msg_x = SCREEN_WIDTH / 2 - 100;
-  let msg_y = SCREEN_HEIGHT / 2;
+  let msg_x = SCREEN_WIDTH * 0.3;
+  let msg_y = SCREEN_HEIGHT * 0.71;
   let msg = "Level completed. Press ENTER for level " + (currLevelIndex + 2);
-  displayMessage(msg, msg_x, msg_y, color(0, 255, 0), 24);
+  displayMessage(msg, msg_x, msg_y, GREEN, 24);
   noLoop();
 }
 
 function displayMessage(msg, x, y, col, font_size) {
   fill(col);
   textSize(font_size);
+  textFont(BOLD);
   text(msg, x, y);
+}
+
+function DisplayReady() {
+  let msg_x = (FRAME_X + SCREEN_WIDTH) * 0.35;
+  let msg_y = SCREEN_HEIGHT * 0.71;
+  displayMessage("READY!", msg_x, msg_y, YELLOW, 24);
 }
 
 function displayGameOver() {
   let msg_x = SCREEN_WIDTH / 2 - 100;
   let msg_y = SCREEN_HEIGHT / 2;
   let msg = "Game over. Press SPACE to restart game";
-  displayMessage(msg, msg_x, msg_y, color(255, 0, 0), 24);
+  displayMessage(msg, msg_x, msg_y, RED, 24);
 }
 
-function displayPause() {
+function DisplayPause() {
   let msg_x = SCREEN_WIDTH / 2 - 100;
   let msg_y = SCREEN_HEIGHT / 2;
   let msg = "Game is Paused. Press ESC to resume";
-  displayMessage(msg, msg_x, msg_y, color(255), 24);
+  displayMessage(msg, msg_x, msg_y, WHITE, 24);
 }
 
-function pauseGame() {
-  gameIsPaused = true;
+function PauseGame() {
+  console.log("Game paused.");
+  gameStatus = GAME_PAUSED;
   stats.msg = "Game is Paused";
+  DisplayPause();
   noLoop();
 }
 
-function resumeGame() {
-  gameIsPaused = false;
+function ResumeGame() {
+  console.log("Game resumed");
+  gameStatus = GAME_PLAY;
   stats.msg = "";
   loop();
-}
-
-function pauseResumeGame() {
-  if (gameIsPaused) {
-    resumeGame();
-  } else {
-    pauseGame();
-  }
 }
 
 function setNextLevel() {
@@ -319,9 +337,12 @@ function setNextLevel() {
   } else {
     stats.SetNextLevel();
     setLevel();
-    isLevelCompleted = false;
+    // gameStatus = GAME_READY;
+    gameStatus = GAME_PLAY;
     currentFruit = fruits[currLevelIndex];
     loop();
+    currentFruit.SetVisible(false);
+    fruitTimer = 0;
   }
 }
 
@@ -329,7 +350,7 @@ function finishGame() {
   let msg_x = SCREEN_WIDTH / 2 - 100;
   let msg_y = SCREEN_HEIGHT / 2;
   let msg = "Game Finished";
-  gameIsFinished = true;
+  gameStatus = GAME_FINISHED;
   displayMessage(msg, msg_x, msg_y, color(0, 255, 0), 24);
   noLoop();
 }
@@ -338,9 +359,8 @@ function checkPacmanEatDot() {
   for (let i = dots.length - 1; i >= 0; i--) {
     if (pacman.collide(dots[i])) {
       let dot = dots.splice(i, 1)[0];
-      console.log(dot.Points);
       stats.increaseScore(dot.Points);
-      if (dots.length == 0) {
+      if (dots.length == 140) {
         levelCompleted();
       }
     }
@@ -498,22 +518,28 @@ function checkKeyIsDown() {
 }
 
 function keyPressed() {
-  if (gameIsOver && key == " ") {
+  if (gameStatus == GAME_OVER && key == " ") {
     resetRound();
   }
-  if (!gameIsOver && isLevelCompleted && keyCode == ENTER) {
+  if (gameStatus == GAME_LEVEL_COMPLETED && keyCode == ENTER) {
     setNextLevel();
   }
-  if (!gameIsOver && keyCode === ESCAPE) {
-    pauseResumeGame();
+  if (gameStatus == GAME_PLAY && keyCode === ESCAPE) {
+    PauseGame();
+    return;
   }
-  if (keyCode === RIGHT_ARROW) {
-    movePacman("R");
-  } else if (keyCode === LEFT_ARROW) {
-    movePacman("L");
-  } else if (keyCode === UP_ARROW) {
-    movePacman("U");
-  } else if (keyCode === DOWN_ARROW) {
-    movePacman("D");
+  if (gameStatus == GAME_PAUSED && keyCode === ESCAPE) {
+    ResumeGame();
+  }
+  if (gameStatus == GAME_PLAY) {
+    if (keyCode === RIGHT_ARROW) {
+      movePacman("R");
+    } else if (keyCode === LEFT_ARROW) {
+      movePacman("L");
+    } else if (keyCode === UP_ARROW) {
+      movePacman("U");
+    } else if (keyCode === DOWN_ARROW) {
+      movePacman("D");
+    }
   }
 }
