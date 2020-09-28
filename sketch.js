@@ -10,10 +10,6 @@ var currentFruit;
 var eatenGhostNum = 0;
 
 var gameStatus;
-// var gameIsOver = false;
-// var gameIsPaused = false;
-// var gameIsFinished = false;
-// var isLevelCompleted = false;
 
 var tileMap;
 var stats;
@@ -49,8 +45,8 @@ async function draw() {
   drawFrame();
   stats.draw();
   currentFruit.Draw();
-  pacman.draw();
-  pacman.update();
+  pacman.Draw();
+  pacman.Update();
   DrawWalls();
   DrawDots();
   DrawPowerPellets();
@@ -180,11 +176,11 @@ function setLevel() {
     for (let j = 0; j < level.matrix[i].length; j++) {
       if (level.matrix[i][j] == TILE_WALL) {
         let wall = new Wall(i, j, 0, 0, TILE_SIZE, BLUE);
-        wall.SetPosition(FRAME_X + j * TILE_SIZE, FRAME_Y + i * TILE_SIZE);
+        wall.SetPosition(i, j);
         walls.push(wall);
       } else if (level.matrix[i][j] == TILE_DOT) {
         dot = new Dot(i, j, 0, 0, TILE_SIZE, color(WHITE), DOT_PTS);
-        dot.SetPosition(FRAME_X + j * TILE_SIZE, FRAME_Y + i * TILE_SIZE);
+        dot.SetPosition(i, j);
         dots.push(dot);
       } else if (level.matrix[i][j] == TILE_POWER) {
         pellet = new PowerPellet(
@@ -196,7 +192,7 @@ function setLevel() {
           color(GRAY3),
           POWER_PTS
         );
-        pellet.SetPosition(FRAME_X + j * TILE_SIZE, FRAME_Y + i * TILE_SIZE);
+        pellet.SetPosition(i, j);
         powerPellets.push(pellet);
       } else if (
         [TILE_GHOST1, TILE_GHOST2, TILE_GHOST3, TILE_GHOST4].includes(
@@ -257,7 +253,7 @@ function SetFruits() {
       friutObj.symbol,
       friutObj.points
     );
-    fruit.SetPositionRowCol(FRUIT_ROW, FRUIT_COL);
+    fruit.SetPosition(FRUIT_ROW, FRUIT_COL);
     fruits.push(fruit);
     currentFruit = fruits[0];
     currentFruit.SetVisible(false);
@@ -357,10 +353,10 @@ function finishGame() {
 
 function checkPacmanEatDot() {
   for (let i = dots.length - 1; i >= 0; i--) {
-    if (pacman.collide(dots[i])) {
+    if (pacman.Collide(dots[i])) {
       let dot = dots.splice(i, 1)[0];
       stats.increaseScore(dot.Points);
-      if (dots.length == 140) {
+      if (dots.length == 0) {
         levelCompleted();
       }
     }
@@ -369,7 +365,7 @@ function checkPacmanEatDot() {
 
 function checkPacmanEatPowerPellet() {
   for (let i = powerPellets.length - 1; i >= 0; i--) {
-    if (pacman.collide(powerPellets[i])) {
+    if (pacman.Collide(powerPellets[i])) {
       let power = powerPellets.splice(i, 1)[0];
       stats.increaseScore(power.Points);
       setGhostsVulnerable();
@@ -395,7 +391,7 @@ function setGhostsInvulnerable() {
 }
 
 function checkPacmanEatFruit() {
-  if (pacman.collide(currentFruit)) {
+  if (pacman.Collide(currentFruit)) {
     stats.increaseScore(currentFruit.Points);
     currentFruit.SetVisible(false);
     fruitTimer = 0;
@@ -404,7 +400,7 @@ function checkPacmanEatFruit() {
 
 async function checkPacmanGhostCollision() {
   for (let ghost of ghosts) {
-    if (pacman.collide(ghost)) {
+    if (pacman.Collide(ghost)) {
       if (ghost.isVulnerable) {
         let gx = ghost.pos.x;
         let gy = ghost.pos.y;

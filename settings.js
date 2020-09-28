@@ -65,7 +65,7 @@ const GHOST_BLINKING_DURATION = 5; // sec
 const READY_DELAY_MS = 3000; // ms
 
 const STATS_HEIGHT = 200;
-const MAX_LIVES = 3;
+const MAX_LIVES = 5;
 
 /* Game States */
 const GAME_READY = 0;

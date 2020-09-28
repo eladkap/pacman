@@ -48,20 +48,18 @@ class Tile {
     this.visible = value;
   }
 
-  SetPosition(x, y) {
+  SetPosition(row, col) {
+    this.row = row;
+    this.col = col;
+    let x = FRAME_X + col * this.width;
+    let y = FRAME_Y + row * this.width;
     this.pos.set(x, y);
   }
 
-  SetPositionRowCol(row, col) {
-    this.row = row;
-    this.col = col;
-    this.pos.x = FRAME_X + col * this.width;
-    this.pos.y = FRAME_Y + row * this.width;
-  }
-
-  SetRandomPositionRowCol() {
-    this.pos.x = FRAME_X + int(random(0, FRAME_COLS)) * this.width;
-    this.pos.y = FRAME_Y + int(random(0, FRAME_ROWS)) * this.width;
+  SetRandomPosition() {
+    let row = int(random(0, FRAME_COLS));
+    let col = int(random(0, FRAME_ROWS));
+    this.SetPosition(row, col);
   }
 }
 //#endregion

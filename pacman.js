@@ -15,9 +15,9 @@ class Pacman {
   }
 
   reset() {
-    let murphy_x = FRAME_X + int(random(0, FRAME_COLS)) * TILE_SIZE;
-    let murphy_y = FRAME_Y + int(random(0, FRAME_ROWS)) * TILE_SIZE;
-    this.pos = createVector(murphy_x, murphy_y);
+    let x = FRAME_X + int(random(0, FRAME_COLS)) * TILE_SIZE;
+    let y = FRAME_Y + int(random(0, FRAME_ROWS)) * TILE_SIZE;
+    this.pos = createVector(x, y);
     this.stop();
   }
 
@@ -78,7 +78,7 @@ class Pacman {
     return "U";
   }
 
-  draw() {
+  Draw() {
     noStroke();
     fill(this.col);
     ellipse(
@@ -89,7 +89,7 @@ class Pacman {
     );
   }
 
-  update() {
+  Update() {
     if (this.isMoving) {
       let x = lerp(
         this.pos.x,
@@ -101,6 +101,14 @@ class Pacman {
         this.pos.y + this.direction.y * this.speed,
         LERP_UNIT
       );
+      // if (this.j == FRAME_COLS - 1) {
+      //   this.j = 1;
+      //   x = FRAME_X + TILE_SIZE;
+      // }
+      // if (this.j == 1) {
+      //   this.j = FRAME_COLS - 1;
+      //   x = FRAME_X + FRAME_COLS * TILE_SIZE;
+      // }
       this.pos.set(x, y);
       this.movingCount++;
       if (this.movingCount == 1 / LERP_UNIT) {
@@ -121,8 +129,10 @@ class Pacman {
     this.pos.set(x, y);
   }
 
-  collide(entity) {
+  Collide(entity) {
     var d = dist(this.pos.x, this.pos.y, entity.pos.x, entity.pos.y);
     return d < 1 && entity.Visible;
   }
 }
+
+class Pacman2 extends Entity {}
