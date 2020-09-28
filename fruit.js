@@ -4,6 +4,7 @@ class Fruit extends Tile {
     this.name = name;
     this.symbol = symbol;
     this.points = points;
+    this.timer = 0;
   }
 
   get Points() {
@@ -18,6 +19,16 @@ class Fruit extends Tile {
       let x = FRAME_X + this.col * this.width;
       let y = FRAME_Y + this.row * this.width;
       text(this.symbol, x, y + this.width * 0.7);
+    }
+  }
+
+  Update() {
+    if (frameCount % FPS == 0) {
+      this.timer++;
+      if (this.timer == FRUIT_SHOW_DELAY) {
+        this.timer = 0;
+        this.SetVisible(true);
+      }
     }
   }
 }

@@ -56,7 +56,7 @@ const FRUIT_DICT = [
 
 const FRUIT_ROW = 11;
 const FRUIT_COL = 9;
-const FRUIT_SHOW_DELAY = 7;
+const FRUIT_SHOW_DELAY = 3;
 const DELAY_AFTER_EATING_GHOST = 500;
 
 const GHOST_POINTS = [200, 400, 800, 1600];

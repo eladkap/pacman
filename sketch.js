@@ -1,4 +1,3 @@
-var fps;
 var pacman;
 var ghosts;
 var walls;
@@ -21,6 +20,7 @@ var recoveryTimer = 0;
 var fruitTimer = 0;
 var recoveryMode = false;
 
+//#region Main Functions
 function LoadTileMap() {
   tileMap = ReadTextFile("tilemap.txt");
 }
@@ -31,8 +31,7 @@ function preload() {
 
 function setup() {
   createCanvas(SCREEN_WIDTH, SCREEN_HEIGHT + STATS_HEIGHT);
-  fps = FPS;
-  frameRate(fps);
+  frameRate(FPS);
   setLevel();
   setStats();
   SetFruits();
@@ -45,6 +44,7 @@ async function draw() {
   drawFrame();
   stats.draw();
   currentFruit.Draw();
+  currentFruit.Update();
   pacman.Draw();
   pacman.Update();
   DrawWalls();
@@ -62,15 +62,15 @@ async function draw() {
     loop();
   }
 
-  checkPacmanEatDot();
-  checkPacmanEatPowerPellet();
-  checkPacmanEatFruit();
-  checkPacmanGhostCollision();
-  handleGhostsVulnerability();
-  handleFruitTimer();
+  // checkPacmanEatDot();
+  // checkPacmanEatPowerPellet();
+  // checkPacmanEatFruit();
+  // checkPacmanGhostCollision();
+  // handleGhostsVulnerability();
 
-  checkKeyIsDown();
+  // CheckKeyIsDown();
 }
+//#endregion
 
 function resetGame() {
   print("Reset game");
@@ -95,6 +95,7 @@ function resetRound() {
   loop();
 }
 
+//todo: this function should be managed in Ghost class in Update() method
 function handleGhostsVulnerability() {
   if (ghosts[0].isVulnerable && !recoveryMode) {
     if (frameCount % FPS == 0) {
@@ -117,17 +118,7 @@ function handleGhostsVulnerability() {
   }
 }
 
-function handleFruitTimer() {
-  if (frameCount % fps == 0) {
-    fruitTimer++;
-    if (fruitTimer == FRUIT_SHOW_DELAY) {
-      fruitTimer = 0;
-      currentFruit.SetVisible(true);
-      print("show fruit");
-    }
-  }
-}
-
+//#region Draw Functions
 function DrawWalls() {
   for (let wall of walls) {
     wall.Draw();
@@ -153,15 +144,16 @@ function drawGhosts() {
   }
 }
 
-function setStats() {
-  stats = new Stats(200, 50, 100, STATS_HEIGHT, MAX_LIVES);
-}
-
 function drawFrame() {
   strokeWeight(1);
   stroke(NAVY);
   noFill();
   rect(FRAME_X, FRAME_Y, FRAME_WIDTH, FRAME_HEIGHT);
+}
+//#endregion
+
+function setStats() {
+  stats = new Stats(200, 50, 100, STATS_HEIGHT, MAX_LIVES);
 }
 
 function setLevel() {
@@ -231,8 +223,9 @@ function setLevel() {
           pacman_x,
           pacman_y,
           TILE_SIZE,
+          YELLOW,
           PACMAN_SPEED,
-          YELLOW
+          MAX_LIVES
         );
       }
     }
@@ -333,7 +326,6 @@ function setNextLevel() {
   } else {
     stats.SetNextLevel();
     setLevel();
-    // gameStatus = GAME_READY;
     gameStatus = GAME_PLAY;
     currentFruit = fruits[currLevelIndex];
     loop();
@@ -472,44 +464,52 @@ function moveGhosts() {
   }
 }
 
-function movePacman(direction) {
+function MovePacman(direction) {
   if (direction == "L") {
-    if (pacman.j - 1 > 0 && level.matrix[pacman.i][pacman.j - 1] != 1) {
-      pacman.goLeft();
+    console.log("Left");
+    if (
+      pacman.Col - 1 > 0 &&
+      level.matrix[pacman.Row][pacman.Col - 1] != TILE_WALL
+    ) {
+      pacman.SetDirection("L");
     }
   }
   if (direction == "R") {
     if (
-      pacman.j + 1 < FRAME_COLS &&
-      level.matrix[pacman.i][pacman.j + 1] != 1
+      pacman.Col + 1 < FRAME_COLS &&
+      level.matrix[pacman.Row][pacman.Col + 1] != TILE_WALL
     ) {
-      pacman.goRight();
+      pacman.SetDirection("R");
     }
   }
   if (direction == "U") {
-    if (pacman.i - 1 > 0 && level.matrix[pacman.i - 1][pacman.j] != 1) {
-      pacman.goUp();
+    if (
+      pacman.Row - 1 > 0 &&
+      level.matrix[pacman.Row - 1][pacman.Col] != TILE_WALL
+    ) {
+      pacman.SetDirection("U");
     }
   }
   if (direction == "D") {
     if (
-      pacman.j + 1 < FRAME_ROWS &&
-      level.matrix[pacman.i + 1][pacman.j] != 1
+      pacman.Col + 1 < FRAME_ROWS &&
+      level.matrix[pacman.Row + 1][pacman.Col] != TILE_WALL
     ) {
-      pacman.goDown();
+      pacman.SetDirection("D");
     }
   }
 }
 
-function checkKeyIsDown() {
+//#region Keyboard Events
+function CheckKeyIsDown() {
   if (keyIsDown(RIGHT_ARROW)) {
-    movePacman("R");
+    MovePacman("R");
   } else if (keyIsDown(LEFT_ARROW)) {
-    movePacman("L");
+    MovePacman("L");
   } else if (keyIsDown(UP_ARROW)) {
-    movePacman("U");
+    MovePacman("U");
   } else if (keyIsDown(DOWN_ARROW)) {
-    movePacman("D");
+    MovePacman("D");
   }
 }
 
@@ -529,13 +529,16 @@ function keyPressed() {
   }
   if (gameStatus == GAME_PLAY) {
     if (keyCode === RIGHT_ARROW) {
-      movePacman("R");
+      MovePacman("R");
     } else if (keyCode === LEFT_ARROW) {
-      movePacman("L");
+      MovePacman("L");
     } else if (keyCode === UP_ARROW) {
-      movePacman("U");
+      MovePacman("U");
     } else if (keyCode === DOWN_ARROW) {
-      movePacman("D");
+      MovePacman("D");
+    } else if (key == " ") {
+      pacman.Stop();
     }
   }
 }
+//#endregion

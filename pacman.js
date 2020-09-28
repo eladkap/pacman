@@ -1,4 +1,4 @@
-class Pacman {
+class Pacman2 {
   constructor(i, j, x, y, w, speed, col) {
     this.i = i;
     this.j = j;
@@ -9,7 +9,7 @@ class Pacman {
     this.direction = createVector(0, 0);
     this.col = col;
     this.life = 100;
-    this.isMoving = false;
+    this.isMoving = false; // redundant property - velocity already indicates this property
     this.movingCount = 0;
     this.stop();
   }
@@ -135,4 +135,47 @@ class Pacman {
   }
 }
 
-class Pacman2 extends Entity {}
+//***********************************************************************************/
+
+class Pacman extends Entity {
+  constructor(row, col, x, y, width, color, speed, lives) {
+    super(row, col, x, y, width, color, speed);
+    this.lives = lives;
+    this.vulnerable = false;
+  }
+
+  get Lives() {
+    return this.lives;
+  }
+
+  get Vulnerable() {
+    return this.vulnerable;
+  }
+
+  Draw() {
+    noStroke();
+    fill(this.color);
+    ellipse(
+      this.pos.x + this.radius,
+      this.pos.y + this.radius,
+      0.7 * this.width,
+      0.7 * this.width
+    );
+  }
+
+  Update() {
+    this.pos.add(this.velocity);
+  }
+
+  IncrementLives() {
+    this.lives++;
+  }
+
+  DecrementLives() {
+    this.lives--;
+  }
+
+  Stop() {
+    this.SetVelocity(0, 0);
+  }
+}
