@@ -12,7 +12,7 @@ var gameStatus;
 
 var tileMap;
 var stats;
-var level;
+var maze;
 var currLevelIndex = 0;
 
 var vulnerabilityTimer = 0;
@@ -32,7 +32,8 @@ function preload() {
 function setup() {
   createCanvas(SCREEN_WIDTH, SCREEN_HEIGHT + STATS_HEIGHT);
   frameRate(FPS);
-  setLevel();
+  SetMaze(tileMap);
+  SetTiles();
   setStats();
   SetFruits();
   gameStatus = GAME_READY;
@@ -41,7 +42,7 @@ function setup() {
 
 async function draw() {
   background(0);
-  drawFrame();
+  DrawMaze();
   stats.draw();
   currentFruit.Draw();
   currentFruit.Update();
@@ -51,7 +52,7 @@ async function draw() {
   DrawDots();
   DrawPowerPellets();
   // drawGhosts();
-  //   moveGhosts();
+  // moveGhosts();
 
   if (gameStatus == GAME_READY) {
     console.log("Game ready.");
@@ -75,8 +76,7 @@ async function draw() {
 function resetGame() {
   print("Reset game");
   gameIsOver = false;
-  LoadTileMap();
-  setLevel();
+  ResetMaze();
   stats.reset();
   pacman.stop();
   loop();
@@ -144,11 +144,11 @@ function drawGhosts() {
   }
 }
 
-function drawFrame() {
+function DrawMaze() {
   strokeWeight(1);
   stroke(NAVY);
   noFill();
-  rect(FRAME_X, FRAME_Y, FRAME_WIDTH, FRAME_HEIGHT);
+  rect(MAZE_X, MAZE_Y, MAZE_WIDTH, MAZE_HEIGHT);
 }
 //#endregion
 
@@ -156,44 +156,41 @@ function setStats() {
   stats = new Stats(200, 50, 100, STATS_HEIGHT, MAX_LIVES);
 }
 
-function setLevel() {
-  level = new Level(1, tileMap);
+function SetMaze(tileMap) {
+  maze = new Maze(MAZE_ROWS, MAZE_COLS);
+  maze.Create(tileMap);
+}
+
+function ResetMaze() {
+  maze = Create(tileMap);
+}
+
+function SetTiles() {
   dots = [];
   powerPellets = [];
   walls = [];
   ghosts = [];
   var ghostColor;
 
-  for (let i = 0; i < level.matrix.length; i++) {
-    for (let j = 0; j < level.matrix[i].length; j++) {
-      if (level.matrix[i][j] == TILE_WALL) {
-        let wall = new Wall(i, j, 0, 0, TILE_SIZE, BLUE);
-        wall.SetPosition(i, j);
+  for (let i = 0; i < maze.Rows; i++) {
+    for (let j = 0; j < maze.Cols; j++) {
+      if (maze.GetValue(i, j) == TILE_WALL) {
+        let wall = new Wall(i, j, TILE_SIZE, BLUE);
         walls.push(wall);
-      } else if (level.matrix[i][j] == TILE_DOT) {
-        dot = new Dot(i, j, 0, 0, TILE_SIZE, color(WHITE), DOT_PTS);
-        dot.SetPosition(i, j);
+      } else if (maze.GetValue(i, j) == TILE_DOT) {
+        dot = new Dot(i, j, TILE_SIZE, color(WHITE), DOT_PTS);
         dots.push(dot);
-      } else if (level.matrix[i][j] == TILE_POWER) {
-        pellet = new PowerPellet(
-          i,
-          j,
-          0,
-          0,
-          TILE_SIZE,
-          color(GRAY3),
-          POWER_PTS
-        );
-        pellet.SetPosition(i, j);
+      } else if (maze.GetValue(i, j) == TILE_POWER) {
+        pellet = new PowerPellet(i, j, TILE_SIZE, color(GRAY3), POWER_PTS);
         powerPellets.push(pellet);
       } else if (
         [TILE_GHOST1, TILE_GHOST2, TILE_GHOST3, TILE_GHOST4].includes(
-          level.matrix[i][j]
+          maze.GetValue(i, j)
         )
       ) {
-        let ghostNum = level.matrix[i][j];
-        let ghost_x = FRAME_X + j * TILE_SIZE;
-        let ghost_y = FRAME_Y + i * TILE_SIZE;
+        let ghostNum = maze.GetValue(i, j);
+        let ghost_x = MAZE_X + j * TILE_SIZE;
+        let ghost_y = MAZE_Y + i * TILE_SIZE;
         if (ghostNum == TILE_GHOST1) {
           ghostColor = RED;
         } else if (ghostNum == TILE_GHOST2) {
@@ -214,19 +211,8 @@ function setLevel() {
           ghostNum
         );
         ghosts.push(ghost);
-      } else if (level.matrix[i][j] == TILE_PACMAN) {
-        let pacman_x = FRAME_X + j * TILE_SIZE;
-        let pacman_y = FRAME_Y + i * TILE_SIZE;
-        pacman = new Pacman(
-          i,
-          j,
-          pacman_x,
-          pacman_y,
-          TILE_SIZE,
-          YELLOW,
-          PACMAN_SPEED,
-          MAX_LIVES
-        );
+      } else if (maze.GetValue(i, j) == TILE_PACMAN) {
+        pacman = new Pacman(i, j, TILE_SIZE, YELLOW, PACMAN_SPEED, MAX_LIVES);
       }
     }
   }
@@ -236,17 +222,14 @@ function SetFruits() {
   fruits = [];
   for (let friutObj of FRUIT_DICT) {
     let fruit = new Fruit(
-      0,
-      0,
-      0,
-      0,
+      FRUIT_ROW,
+      FRUIT_COL,
       TILE_SIZE,
       color(WHITE),
       friutObj.name,
       friutObj.symbol,
       friutObj.points
     );
-    fruit.SetPosition(FRUIT_ROW, FRUIT_COL);
     fruits.push(fruit);
     currentFruit = fruits[0];
     currentFruit.SetVisible(false);
@@ -285,7 +268,7 @@ function displayMessage(msg, x, y, col, font_size) {
 }
 
 function DisplayReady() {
-  let msg_x = (FRAME_X + SCREEN_WIDTH) * 0.35;
+  let msg_x = (MAZE_X + SCREEN_WIDTH) * 0.35;
   let msg_y = SCREEN_HEIGHT * 0.71;
   displayMessage("READY!", msg_x, msg_y, YELLOW, 24);
 }
@@ -319,13 +302,13 @@ function ResumeGame() {
   loop();
 }
 
-function setNextLevel() {
+function SetNextLevel() {
   currLevelIndex++;
   if (currLevelIndex == fruits.length) {
     finishGame();
   } else {
     stats.SetNextLevel();
-    setLevel();
+    ResetMaze();
     gameStatus = GAME_PLAY;
     currentFruit = fruits[currLevelIndex];
     loop();
@@ -398,8 +381,8 @@ async function checkPacmanGhostCollision() {
         let gy = ghost.pos.y;
         console.log(GHOST_POINTS[eatenGhostNum]);
         stats.increaseScore(GHOST_POINTS[eatenGhostNum]);
-        let ghost_x = FRAME_X + 9 * TILE_SIZE;
-        let ghost_y = FRAME_Y + 9 * TILE_SIZE;
+        let ghost_x = MAZE_X + 9 * TILE_SIZE;
+        let ghost_y = MAZE_Y + 9 * TILE_SIZE;
         ghost.setLocationRowCol(9, 9);
         displayMessage(GHOST_POINTS[eatenGhostNum], gx, gy, GRAY3, 16);
         eatenGhostNum++;
@@ -423,7 +406,7 @@ function recoverGhosts() {
 }
 
 function canGoRight(ghost) {
-  return ghost.j + 1 < FRAME_COLS && level.matrix[ghost.i][ghost.j + 1] != 1;
+  return ghost.j + 1 < MAZE_COLS && level.matrix[ghost.i][ghost.j + 1] != 1;
 }
 
 function canGoLeft(ghost) {
@@ -435,7 +418,7 @@ function canGoUp(ghost) {
 }
 
 function canGoDown(ghost) {
-  return ghost.j + 1 < FRAME_ROWS && level.matrix[ghost.i + 1][ghost.j] != 1;
+  return ghost.j + 1 < MAZE_ROWS && level.matrix[ghost.i + 1][ghost.j] != 1;
 }
 
 // Ghost AI
@@ -466,17 +449,18 @@ function moveGhosts() {
 
 function MovePacman(direction) {
   if (direction == "L") {
-    console.log("Left");
-    if (
-      pacman.Col - 1 > 0 &&
-      level.matrix[pacman.Row][pacman.Col - 1] != TILE_WALL
-    ) {
-      pacman.SetDirection("L");
-    }
+    pacman.SetDirection("L");
+    // console.log("Left");
+    // if (
+    //   pacman.Col - 1 > 0 &&
+    //   level.matrix[pacman.Row][pacman.Col - 1] != TILE_WALL
+    // ) {
+    //   pacman.SetDirection("L");
+    // }
   }
   if (direction == "R") {
     if (
-      pacman.Col + 1 < FRAME_COLS &&
+      pacman.Col + 1 < MAZE_COLS &&
       level.matrix[pacman.Row][pacman.Col + 1] != TILE_WALL
     ) {
       pacman.SetDirection("R");
@@ -492,7 +476,7 @@ function MovePacman(direction) {
   }
   if (direction == "D") {
     if (
-      pacman.Col + 1 < FRAME_ROWS &&
+      pacman.Col + 1 < MAZE_ROWS &&
       level.matrix[pacman.Row + 1][pacman.Col] != TILE_WALL
     ) {
       pacman.SetDirection("D");
@@ -503,13 +487,13 @@ function MovePacman(direction) {
 //#region Keyboard Events
 function CheckKeyIsDown() {
   if (keyIsDown(RIGHT_ARROW)) {
-    MovePacman("R");
+    pacman.SetDirection("R");
   } else if (keyIsDown(LEFT_ARROW)) {
-    MovePacman("L");
+    pacman.SetDirection("L");
   } else if (keyIsDown(UP_ARROW)) {
-    MovePacman("U");
+    pacman.SetDirection("U");
   } else if (keyIsDown(DOWN_ARROW)) {
-    MovePacman("D");
+    pacman.SetDirection("D");
   }
 }
 
@@ -529,13 +513,13 @@ function keyPressed() {
   }
   if (gameStatus == GAME_PLAY) {
     if (keyCode === RIGHT_ARROW) {
-      MovePacman("R");
+      pacman.SetDirection("R");
     } else if (keyCode === LEFT_ARROW) {
-      MovePacman("L");
+      pacman.SetDirection("L");
     } else if (keyCode === UP_ARROW) {
-      MovePacman("U");
+      pacman.SetDirection("U");
     } else if (keyCode === DOWN_ARROW) {
-      MovePacman("D");
+      pacman.SetDirection("D");
     } else if (key == " ") {
       pacman.Stop();
     }

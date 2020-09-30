@@ -3,14 +3,14 @@ const SCREEN_HEIGHT = 960; // TILE_SIZE * FRAME_COLS;
 
 const TILE_SIZE = 50;
 
-const FRAME_X = 100;
-const FRAME_Y = 100;
+const MAZE_X = 100;
+const MAZE_Y = 100;
 
-const FRAME_ROWS = 20;
-const FRAME_COLS = 20;
+const MAZE_ROWS = 20;
+const MAZE_COLS = 20;
 
-const FRAME_WIDTH = FRAME_ROWS * TILE_SIZE;
-const FRAME_HEIGHT = FRAME_COLS * TILE_SIZE;
+const MAZE_WIDTH = MAZE_ROWS * TILE_SIZE;
+const MAZE_HEIGHT = MAZE_COLS * TILE_SIZE;
 
 var LERP_UNIT = 0.2; // Linear Interpolation - Animation movement unit
 var LERP_UNIT_GHOST = 0.2;

@@ -1,8 +1,8 @@
 class Tile {
-  constructor(row, col, x, y, width, color) {
+  constructor(row, col, width, color) {
     this.row = row;
     this.col = col;
-    this.pos = createVector(x, y);
+    this.pos = createVector(MAZE_X + col * width, MAZE_Y + row * width);
     this.width = width;
     this.radius = width / 2;
     this.color = color;
@@ -51,14 +51,14 @@ class Tile {
   SetPosition(row, col) {
     this.row = row;
     this.col = col;
-    let x = FRAME_X + col * this.width;
-    let y = FRAME_Y + row * this.width;
+    let x = MAZE_X + col * this.width;
+    let y = MAZE_Y + row * this.width;
     this.pos.set(x, y);
   }
 
   SetRandomPosition() {
-    let row = int(random(0, FRAME_COLS));
-    let col = int(random(0, FRAME_ROWS));
+    let row = int(random(0, MAZE_COLS));
+    let col = int(random(0, MAZE_ROWS));
     this.SetPosition(row, col);
   }
 }

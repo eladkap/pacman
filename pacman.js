@@ -138,8 +138,8 @@ class Pacman2 {
 //***********************************************************************************/
 
 class Pacman extends Entity {
-  constructor(row, col, x, y, width, color, speed, lives) {
-    super(row, col, x, y, width, color, speed);
+  constructor(row, col, width, color, speed, lives) {
+    super(row, col, width, color, speed);
     this.lives = lives;
     this.vulnerable = false;
   }
@@ -173,9 +173,5 @@ class Pacman extends Entity {
 
   DecrementLives() {
     this.lives--;
-  }
-
-  Stop() {
-    this.SetVelocity(0, 0);
   }
 }

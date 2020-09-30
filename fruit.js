@@ -1,6 +1,6 @@
 class Fruit extends Tile {
-  constructor(row, col, x, y, width, color, name, symbol, points) {
-    super(row, col, x, y, width, color);
+  constructor(row, col, width, color, name, symbol, points) {
+    super(row, col, width, color);
     this.name = name;
     this.symbol = symbol;
     this.points = points;
@@ -16,9 +16,7 @@ class Fruit extends Tile {
       noStroke();
       fill(this.color);
       textSize(this.width * 0.6);
-      let x = FRAME_X + this.col * this.width;
-      let y = FRAME_Y + this.row * this.width;
-      text(this.symbol, x, y + this.width * 0.7);
+      text(this.symbol, this.pos.x, this.pos.y + this.width * 0.7);
     }
   }
 
