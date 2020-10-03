@@ -2,10 +2,14 @@
 Entity represents moving object (pacman or ghost)
 */
 class Entity extends Tile {
-  constructor(row, col, width, color, speed) {
+  constructor(row, col, width, color, speed, maze, tileType) {
     super(row, col, width, color);
     this.speed = speed;
-    this.velocity = createVector(0, 0);
+    this.direction = createVector(0, 0);
+    this.maze = maze;
+    this.tileType = tileType;
+    this.movingCount = 0;
+    this.isMoving = false;
   }
 
   //#region Properties
@@ -13,8 +17,8 @@ class Entity extends Tile {
     return this.speed;
   }
 
-  get Velocity() {
-    return this.velocity;
+  get Direction() {
+    return this.direction;
   }
   //#endregion
 
@@ -22,35 +26,108 @@ class Entity extends Tile {
   Draw() {}
 
   Update() {
-    this.pos.add(this.velocity);
+    if (this.isMoving) {
+      let x = lerp(
+        this.pos.x,
+        this.pos.x + this.direction.x * this.speed,
+        LERP_UNIT
+      );
+      let y = lerp(
+        this.pos.y,
+        this.pos.y + this.direction.y * this.speed,
+        LERP_UNIT
+      );
+      this.pos.set(x, y);
+      this.movingCount++;
+      if (this.movingCount == 1 / LERP_UNIT) {
+        this.movingCount = 0;
+        this.isMoving = false;
+      }
+    }
   }
 
-  SetVelocity(velocityX, velocityY) {
-    this.velocity.set(velocityX, velocityY);
+  SetDirection(directionX, directionY) {
+    this.direction.set(directionX, directionY);
   }
 
-  CanGoLeft() {}
+  CanGoLeft() {
+    // return this.pos.x > MAZE_X && !this.isMoving;
+    return (
+      this.col > 0 &&
+      this.maze.GetValue(this.row, this.col - 1) != TILE_WALL &&
+      !this.isMoving
+    );
+  }
 
-  CanGoRight() {}
+  CanGoRight() {
+    // return this.pos.x < MAZE_X + MAZE_WIDTH - this.width && !this.isMoving;
+    return (
+      this.col + 1 < this.maze.Cols - 1 &&
+      this.maze.GetValue(this.row, this.col + 1) != TILE_WALL &&
+      !this.isMoving
+    );
+  }
 
-  CanGoUp() {}
+  CanGoUp() {
+    // return this.pos.y < MAZE_Y + MAZE_HEIGHT - this.width && !this.isMoving;
+    return (
+      this.row > 0 &&
+      this.maze.GetValue(this.row - 1, this.col) != TILE_WALL &&
+      !this.isMoving
+    );
+  }
 
-  CanGoDown() {}
+  CanGoDown() {
+    // return this.pos.y > MAZE_Y && !this.isMoving;
+    return (
+      this.row + 1 < this.maze.Rows - 1 &&
+      this.maze.GetValue(this.row + 1, this.col) != TILE_WALL &&
+      !this.isMoving
+    );
+  }
 
-  SetDirection(direction) {
-    if (direction == "R") {
-      this.SetVelocity(this.speed, 0);
-    } else if (direction == "L") {
-      this.SetVelocity(-this.speed, 0);
-    } else if (direction == "U") {
-      this.SetVelocity(0, -this.speed);
-    } else {
-      this.SetVelocity(0, this.speed);
+  GoLeft() {
+    if (this.CanGoLeft()) {
+      this.direction.set(-1, 0);
+      this.isMoving = true;
+      this.maze.SetValue(this.row, this.col, TILE_EMPTY);
+      this.col--;
+      this.maze.SetValue(this.row, this.col, this.tileType);
+    }
+  }
+
+  GoRight() {
+    if (this.CanGoRight()) {
+      this.direction.set(1, 0);
+      this.isMoving = true;
+      this.maze.SetValue(this.row, this.col, TILE_EMPTY);
+      this.col++;
+      this.maze.SetValue(this.row, this.col, this.tileType);
+    }
+  }
+
+  GoUp() {
+    if (this.CanGoUp()) {
+      this.direction.set(0, -1);
+      this.isMoving = true;
+      this.maze.SetValue(this.row, this.col, TILE_EMPTY);
+      this.row--;
+      this.maze.SetValue(this.row, this.col, this.tileType);
+    }
+  }
+
+  GoDown() {
+    if (this.CanGoDown()) {
+      this.direction.set(0, 1);
+      this.isMoving = true;
+      this.maze.SetValue(this.row, this.col, TILE_EMPTY);
+      this.row++;
+      this.maze.SetValue(this.row, this.col, this.tileType);
     }
   }
 
   Stop() {
-    this.SetVelocity(0, 0);
+    this.SetDirection(0, 0);
   }
 
   Collide(entity) {

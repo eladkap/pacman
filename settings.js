@@ -1,6 +1,8 @@
 const SCREEN_WIDTH = 1400; // TILE_SIZE * FRAME_ROWS;
 const SCREEN_HEIGHT = 960; // TILE_SIZE * FRAME_COLS;
 
+const FPS = 30;
+
 const TILE_SIZE = 50;
 
 const MAZE_X = 100;
@@ -31,8 +33,6 @@ const AQUA = [100, 255, 255];
 const BLUE = [0, 0, 250];
 const PURPLE = [200, 0, 250];
 const NAVY = [0, 0, 128];
-
-var FPS = 30;
 
 const PACMAN_RADIUS = TILE_SIZE / 2;
 

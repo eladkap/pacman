@@ -101,14 +101,6 @@ class Pacman2 {
         this.pos.y + this.direction.y * this.speed,
         LERP_UNIT
       );
-      // if (this.j == FRAME_COLS - 1) {
-      //   this.j = 1;
-      //   x = FRAME_X + TILE_SIZE;
-      // }
-      // if (this.j == 1) {
-      //   this.j = FRAME_COLS - 1;
-      //   x = FRAME_X + FRAME_COLS * TILE_SIZE;
-      // }
       this.pos.set(x, y);
       this.movingCount++;
       if (this.movingCount == 1 / LERP_UNIT) {
@@ -138,8 +130,8 @@ class Pacman2 {
 //***********************************************************************************/
 
 class Pacman extends Entity {
-  constructor(row, col, width, color, speed, lives) {
-    super(row, col, width, color, speed);
+  constructor(row, col, width, color, speed, maze, tileType, lives) {
+    super(row, col, width, color, speed, maze, tileType);
     this.lives = lives;
     this.vulnerable = false;
   }
@@ -161,10 +153,6 @@ class Pacman extends Entity {
       0.7 * this.width,
       0.7 * this.width
     );
-  }
-
-  Update() {
-    this.pos.add(this.velocity);
   }
 
   IncrementLives() {

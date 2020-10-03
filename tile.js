@@ -15,7 +15,7 @@ class Tile {
   }
 
   get Col() {
-    return this.row;
+    return this.col;
   }
 
   get Position() {
@@ -60,6 +60,13 @@ class Tile {
     let row = int(random(0, MAZE_COLS));
     let col = int(random(0, MAZE_ROWS));
     this.SetPosition(row, col);
+  }
+
+  UpdatePosition() {
+    this.pos.set(
+      MAZE_X + this.col * this.width,
+      MAZE_Y + this.row * this.width
+    );
   }
 }
 //#endregion
