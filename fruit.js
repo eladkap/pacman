@@ -29,4 +29,8 @@ class Fruit extends Tile {
       }
     }
   }
+
+  Reset() {
+    this.timer = 0;
+  }
 }

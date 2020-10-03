@@ -35,7 +35,7 @@ class Stats {
     textSize(36);
     fill(255);
     text(
-      `Time: --\t\tLevel: ${this.levelNum}\t\tScore: ${this.score}\t\t Lives: ${this.lives}\t\t${currentFruit.symbol}\t\t${this.msg}`,
+      `Time: --\t\tLevel: ${this.levelNum}\t\tScore: ${this.score}\t\t Lives: ${this.lives}\t\t${currentFruit.symbol}`,
       this.x,
       this.y
     );

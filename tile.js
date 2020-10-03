@@ -1,11 +1,12 @@
 class Tile {
-  constructor(row, col, width, color) {
+  constructor(row, col, width, color, symbol) {
     this.row = row;
     this.col = col;
     this.pos = createVector(MAZE_X + col * width, MAZE_Y + row * width);
     this.width = width;
     this.radius = width / 2;
     this.color = color;
+    this.symbol = symbol;
     this.visible = true;
   }
 

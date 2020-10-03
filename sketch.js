@@ -17,7 +17,6 @@ var currLevelIndex = 0;
 
 var vulnerabilityTimer = 0;
 var recoveryTimer = 0;
-var fruitTimer = 0;
 var recoveryMode = false;
 
 //#region Main Functions
@@ -86,7 +85,7 @@ function resetRound() {
   print("Reset round");
   gameStatus = GAME_PLAY;
   currentFruit.SetVisible(false);
-  fruitTimer = 0;
+  currentFruit.Reset();
   pacman.stop();
   pacman.setLocationRowCol(PACMAN_ROW, PACMAN_COL);
   for (let ghost of ghosts) {
@@ -175,13 +174,13 @@ function SetTiles() {
   for (let i = 0; i < maze.Rows; i++) {
     for (let j = 0; j < maze.Cols; j++) {
       if (maze.GetValue(i, j) == TILE_WALL) {
-        let wall = new Wall(i, j, TILE_SIZE, BLUE);
+        let wall = new Wall(i, j, TILE_SIZE, BLUE, "#");
         walls.push(wall);
       } else if (maze.GetValue(i, j) == TILE_DOT) {
-        dot = new Dot(i, j, TILE_SIZE, WHITE, DOT_PTS);
+        dot = new Dot(i, j, TILE_SIZE, WHITE, ".", DOT_PTS);
         dots.push(dot);
       } else if (maze.GetValue(i, j) == TILE_POWER) {
-        pellet = new PowerPellet(i, j, TILE_SIZE, GRAY3, POWER_PTS);
+        pellet = new PowerPellet(i, j, TILE_SIZE, GRAY3, "O", POWER_PTS);
         powerPellets.push(pellet);
       } else if (
         [TILE_GHOST1, TILE_GHOST2, TILE_GHOST3, TILE_GHOST4].includes(
@@ -217,6 +216,7 @@ function SetTiles() {
           j,
           TILE_SIZE,
           YELLOW,
+          PACMAN_SYMBOL,
           PACMAN_SPEED,
           maze,
           TILE_PACMAN,
@@ -330,7 +330,7 @@ function SetNextLevel() {
     currentFruit = fruits[currLevelIndex];
     loop();
     currentFruit.SetVisible(false);
-    fruitTimer = 0;
+    currentFruit.Reset();
   }
 }
 
@@ -386,7 +386,7 @@ function CheckPacmanEatFruit() {
   if (pacman.Collide(currentFruit)) {
     stats.increaseScore(currentFruit.Points);
     currentFruit.SetVisible(false);
-    fruitTimer = 0;
+    currentFruit.Reset();
   }
 }
 

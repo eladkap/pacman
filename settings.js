@@ -44,6 +44,10 @@ const PACMAN_COL = 9;
 const DOT_PTS = 10;
 const POWER_PTS = 50;
 
+const PACMAN_SYMBOL = "🙂";
+const LIFE_SYMBOL = "❤️";
+const STOP_GHOSTS_SYMBOL = "🛑";
+
 const FRUIT_DICT = [
   { symbol: "🍒", name: "Cherry", points: 100 },
   { symbol: "🍓", name: "Strawberry", points: 300 },
@@ -56,7 +60,7 @@ const FRUIT_DICT = [
 
 const FRUIT_ROW = 11;
 const FRUIT_COL = 9;
-const FRUIT_SHOW_DELAY = 3;
+const FRUIT_SHOW_DELAY = 7;
 const DELAY_AFTER_EATING_GHOST = 500;
 
 const GHOST_POINTS = [200, 400, 800, 1600];

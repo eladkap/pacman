@@ -130,8 +130,8 @@ class Pacman2 {
 //***********************************************************************************/
 
 class Pacman extends Entity {
-  constructor(row, col, width, color, speed, maze, tileType, lives) {
-    super(row, col, width, color, speed, maze, tileType);
+  constructor(row, col, width, color, symbol, speed, maze, tileType, lives) {
+    super(row, col, width, color, symbol, speed, maze, tileType);
     this.lives = lives;
     this.vulnerable = false;
   }
@@ -147,12 +147,14 @@ class Pacman extends Entity {
   Draw() {
     noStroke();
     fill(this.color);
-    ellipse(
-      this.pos.x + this.radius,
-      this.pos.y + this.radius,
-      0.7 * this.width,
-      0.7 * this.width
-    );
+    textSize(this.width * 0.6);
+    text(this.symbol, this.pos.x, this.pos.y + this.width * 0.7);
+    // ellipse(
+    //   this.pos.x + this.radius,
+    //   this.pos.y + this.radius,
+    //   0.7 * this.width,
+    //   0.7 * this.width
+    // );
   }
 
   IncrementLives() {
