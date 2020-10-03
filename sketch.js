@@ -5,6 +5,7 @@ var dots;
 var powerPellets;
 var fruits;
 var currentFruit;
+var lifeTile;
 
 var eatenGhostNum = 0;
 
@@ -35,6 +36,7 @@ function setup() {
   SetTiles();
   setStats();
   SetFruits();
+  SetLifeTile();
   gameStatus = GAME_READY;
   noLoop();
 }
@@ -45,13 +47,14 @@ async function draw() {
   stats.draw();
   currentFruit.Draw();
   currentFruit.Update();
+  // lifeTile.Draw();
+  // lifeTile.Update();
   DrawWalls();
   DrawDots();
   DrawPowerPellets();
   pacman.Draw();
   pacman.Update();
-  // drawGhosts();
-  // moveGhosts();
+  DrawGhosts();
 
   if (gameStatus == GAME_READY) {
     console.log("Game ready.");
@@ -136,10 +139,10 @@ function DrawPowerPellets() {
   }
 }
 
-function drawGhosts() {
+function DrawGhosts() {
   for (let ghost of ghosts) {
-    ghost.draw();
-    ghost.update();
+    ghost.Draw();
+    ghost.Update();
   }
 }
 
@@ -188,25 +191,27 @@ function SetTiles() {
         )
       ) {
         let ghostNum = maze.GetValue(i, j);
-        let ghost_x = MAZE_X + j * TILE_SIZE;
-        let ghost_y = MAZE_Y + i * TILE_SIZE;
         if (ghostNum == TILE_GHOST1) {
           ghostColor = RED;
+          ghostSymbol = GHOST1_SYMBOL;
         } else if (ghostNum == TILE_GHOST2) {
           ghostColor = PINK;
+          ghostSymbol = GHOST2_SYMBOL;
         } else if (ghostNum == TILE_GHOST3) {
           ghostColor = ORANGE;
+          ghostSymbol = GHOST3_SYMBOL;
         } else {
           ghostColor = AQUA;
+          ghostSymbol = GHOST4_SYMBOL;
         }
         ghost = new Ghost(
           i,
           j,
-          ghost_x,
-          ghost_y,
           TILE_SIZE,
-          GHOST_SPEED,
           ghostColor,
+          ghostSymbol,
+          GHOST_SPEED,
+          maze,
           ghostNum
         );
         ghosts.push(ghost);
@@ -251,6 +256,10 @@ function SetFruits() {
     currentFruit = fruits[0];
     currentFruit.SetVisible(false);
   }
+}
+
+function SetLifeTile() {
+  // lifeTile = new Tile(FRUIT_ROW, FRUIT_COL, TILE_SIZE, WHITE, LIFE_SYMBOL);
 }
 
 function gameOver() {
@@ -360,7 +369,7 @@ function CheckPacmanEatPowerPellet() {
     if (pacman.Collide(powerPellets[i])) {
       let power = powerPellets.splice(i, 1)[0];
       stats.increaseScore(power.Points);
-      setGhostsVulnerable();
+      // setGhostsVulnerable();
     }
   }
 }

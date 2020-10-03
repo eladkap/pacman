@@ -10,6 +10,7 @@ class Entity extends Tile {
     this.tileType = tileType;
     this.movingCount = 0;
     this.isMoving = false;
+    this.vulnerable = false;
   }
 
   //#region Properties
@@ -19,6 +20,10 @@ class Entity extends Tile {
 
   get Direction() {
     return this.direction;
+  }
+
+  get Vulnerable() {
+    return this.vulnerable;
   }
   //#endregion
 
@@ -44,6 +49,10 @@ class Entity extends Tile {
         this.isMoving = false;
       }
     }
+  }
+
+  SetVulnerable(value) {
+    this.vulnerable = value;
   }
 
   SetDirection(directionX, directionY) {
