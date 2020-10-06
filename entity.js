@@ -30,6 +30,8 @@ class Entity extends Tile {
   //#region Methods
   Draw() {}
 
+  ChangeDirection() {}
+
   Update() {
     if (this.isMoving) {
       let x = lerp(
@@ -47,6 +49,7 @@ class Entity extends Tile {
       if (this.movingCount == 1 / LERP_UNIT) {
         this.movingCount = 0;
         this.isMoving = false;
+        this.ChangeDirection();
       }
     }
   }
@@ -93,6 +96,23 @@ class Entity extends Tile {
       this.maze.GetValue(this.row + 1, this.col) != TILE_WALL &&
       !this.isMoving
     );
+  }
+
+  GotoDirection(direction) {
+    switch (direction) {
+      case "L":
+        this.GoLeft();
+        break;
+      case "R":
+        this.GoRight();
+        break;
+      case "U":
+        this.GoUp();
+        break;
+      default:
+        this.GoDown();
+        break;
+    }
   }
 
   GoLeft() {
@@ -143,6 +163,5 @@ class Entity extends Tile {
     var d = dist(this.pos.x, this.pos.y, entity.pos.x, entity.pos.y);
     return d < 1 && entity.Visible;
   }
-
   //#endregion
 }

@@ -204,7 +204,7 @@ function SetTiles() {
           ghostColor = AQUA;
           ghostSymbol = GHOST4_SYMBOL;
         }
-        ghost = new Ghost(
+        let ghost = new Ghost(
           i,
           j,
           TILE_SIZE,
@@ -214,6 +214,7 @@ function SetTiles() {
           maze,
           ghostNum
         );
+        ghost.SetRandomDirection();
         ghosts.push(ghost);
       } else if (maze.GetValue(i, j) == TILE_PACMAN) {
         pacman = new Pacman(

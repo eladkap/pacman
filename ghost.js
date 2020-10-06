@@ -249,4 +249,57 @@ class Ghost extends Entity {
     textSize(this.width * 0.6);
     text(this.symbol, this.pos.x, this.pos.y + this.width * 0.7);
   }
+
+  GetPossibleDirections() {
+    let possibleDirections = [];
+    if (this.CanGoLeft()) {
+      possibleDirections.push("L");
+    }
+    if (this.CanGoRight()) {
+      possibleDirections.push("R");
+    }
+    if (this.CanGoUp()) {
+      possibleDirections.push("U");
+    }
+    if (this.CanGoDown()) {
+      possibleDirections.push("D");
+    }
+    return possibleDirections;
+  }
+
+  SetRandomDirection() {
+    let possibleDirections = this.GetPossibleDirections();
+    let chosenDirection = random(possibleDirections);
+    this.GotoDirection(chosenDirection);
+  }
+
+  ChangeDirection() {
+    var currentDirection;
+    var oppositeDirection;
+    if (this.x < 0) {
+      currentDirection = "L";
+      oppositeDirection = "R";
+    }
+    if (this.x > 0) {
+      currentDirection = "R";
+      oppositeDirection = "L";
+    }
+    if (this.y < 0) {
+      currentDirection = "U";
+      oppositeDirection = "D";
+    }
+    if (this.y > 0) {
+      currentDirection = "D";
+      oppositeDirection = "U";
+    }
+    let possibleDirections = this.GetPossibleDirections();
+    if (possibleDirections.length == 1) {
+      this.GotoDirection(possibleDirections[0]);
+    } else {
+      let index = possibleDirections.indexOf(oppositeDirection);
+      possibleDirections.splice(index, 1);
+      let chosenDirection = random(possibleDirections);
+      this.GotoDirection(chosenDirection);
+    }
+  }
 }
