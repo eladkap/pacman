@@ -276,23 +276,24 @@ class Ghost extends Entity {
   ChangeDirection() {
     var currentDirection;
     var oppositeDirection;
-    if (this.x < 0) {
+    if (this.direction.x < 0) {
       currentDirection = "L";
       oppositeDirection = "R";
     }
-    if (this.x > 0) {
+    if (this.direction.x > 0) {
       currentDirection = "R";
       oppositeDirection = "L";
     }
-    if (this.y < 0) {
+    if (this.direction.y < 0) {
       currentDirection = "U";
       oppositeDirection = "D";
     }
-    if (this.y > 0) {
+    if (this.direction.y > 0) {
       currentDirection = "D";
       oppositeDirection = "U";
     }
     let possibleDirections = this.GetPossibleDirections();
+
     if (possibleDirections.length == 1) {
       this.GotoDirection(possibleDirections[0]);
     } else {
@@ -301,5 +302,6 @@ class Ghost extends Entity {
       let chosenDirection = random(possibleDirections);
       this.GotoDirection(chosenDirection);
     }
+    this.isMoving = true;
   }
 }

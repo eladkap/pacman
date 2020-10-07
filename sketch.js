@@ -54,7 +54,7 @@ async function draw() {
   DrawPowerPellets();
   pacman.Draw();
   pacman.Update();
-  DrawGhosts();
+  MoveGhosts();
 
   if (gameStatus == GAME_READY) {
     console.log("Game ready.");
@@ -63,6 +63,9 @@ async function draw() {
     gameStatus = GAME_PLAY;
     console.log("Game started.");
     loop();
+    for (let ghost of ghosts) {
+      ghost.SetRandomDirection();
+    }
   }
 
   CheckPacmanEatDot();
@@ -139,7 +142,7 @@ function DrawPowerPellets() {
   }
 }
 
-function DrawGhosts() {
+function MoveGhosts() {
   for (let ghost of ghosts) {
     ghost.Draw();
     ghost.Update();
@@ -214,7 +217,7 @@ function SetTiles() {
           maze,
           ghostNum
         );
-        ghost.SetRandomDirection();
+        // ghost.SetRandomDirection();
         ghosts.push(ghost);
       } else if (maze.GetValue(i, j) == TILE_PACMAN) {
         pacman = new Pacman(
