@@ -13,6 +13,7 @@ class Entity extends Tile {
     this.movingCount = 0;
     this.isMoving = false;
     this.vulnerable = false;
+    this.lerpUnit = LERP_UNIT;
   }
 
   //#region Properties
@@ -43,16 +44,16 @@ class Entity extends Tile {
       let x = lerp(
         this.pos.x,
         this.pos.x + this.direction.x * this.speed,
-        LERP_UNIT
+        this.lerpUnit
       );
       let y = lerp(
         this.pos.y,
         this.pos.y + this.direction.y * this.speed,
-        LERP_UNIT
+        this.lerpUnit
       );
       this.pos.set(x, y);
       this.movingCount++;
-      if (this.movingCount == 1 / LERP_UNIT) {
+      if (this.movingCount == 1 / this.lerpUnit) {
         this.movingCount = 0;
         this.isMoving = false;
         this.ChangeDirection();

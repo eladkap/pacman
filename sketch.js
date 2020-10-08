@@ -16,7 +16,6 @@ var stats;
 var maze;
 var currLevelIndex = 0;
 
-var vulnerabilityTimer = 0;
 var recoveryTimer = 0;
 var recoveryMode = false;
 
@@ -209,7 +208,6 @@ function SetTiles() {
           maze,
           ghostNum
         );
-        // ghost.SetRandomDirection();
         ghosts.push(ghost);
       } else if (maze.GetValue(i, j) == TILE_PACMAN) {
         pacman = new Pacman(
@@ -368,18 +366,17 @@ function CheckPacmanEatPowerPellet() {
     if (pacman.Collide(powerPellets[i])) {
       let power = powerPellets.splice(i, 1)[0];
       stats.increaseScore(power.Points);
-      // setGhostsVulnerable();
+      SetGhostsVulnerable();
     }
   }
 }
 
-function setGhostsVulnerable() {
-  vulnerabilityTimer = 0;
+function SetGhostsVulnerable() {
   recoveryTimer = 0;
   recoveryMode = false;
   for (let ghost of ghosts) {
-    ghost.setVulnerable(true);
-    ghost.setBlinking(false);
+    ghost.SetVulnerable(true);
+    // ghost.setBlinking(false);
   }
 }
 
@@ -398,7 +395,7 @@ function CheckPacmanEatFruit() {
   }
 }
 
-function CheckPacmanGhostCollision() {
+async function CheckPacmanGhostCollision() {
   // asyc
   for (let ghost of ghosts) {
     if (pacman.Collide(ghost)) {
@@ -407,14 +404,14 @@ function CheckPacmanGhostCollision() {
         let gy = ghost.pos.y;
         console.log(GHOST_POINTS[eatenGhostNum]);
         stats.increaseScore(GHOST_POINTS[eatenGhostNum]);
-        let ghost_x = MAZE_X + 9 * TILE_SIZE;
-        let ghost_y = MAZE_Y + 9 * TILE_SIZE;
-        ghost.setLocationRowCol(9, 9);
+        ghost.SetOriginalPosition();
+        ghost.Stop();
+        ghost.SetRandomDirection();
         DisplayMessage(GHOST_POINTS[eatenGhostNum], gx, gy, GRAY3, 16);
         eatenGhostNum++;
-        // noLoop();
-        // await Sleep(DELAY_AFTER_EATING_GHOST);
-        // loop();
+        noLoop();
+        await Sleep(DELAY_AFTER_EATING_GHOST);
+        loop();
       } else {
         noLoop();
         GameOver();
@@ -518,9 +515,10 @@ function keyPressed() {
       pacman.GoUp();
     } else if (keyCode === DOWN_ARROW) {
       pacman.GoDown();
-    } else if (key == " ") {
-      pacman.Stop();
     }
+    // else if (key == " ") {
+    //   pacman.Stop();
+    // }
   }
 }
 //#endregion
