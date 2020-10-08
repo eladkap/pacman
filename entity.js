@@ -4,6 +4,8 @@ Entity represents moving object (pacman or ghost)
 class Entity extends Tile {
   constructor(row, col, width, color, symbol, speed, maze, tileType) {
     super(row, col, width, color, symbol);
+    this.originalRow = row;
+    this.originalCol = col;
     this.speed = speed;
     this.direction = createVector(0, 0);
     this.maze = maze;
@@ -31,6 +33,10 @@ class Entity extends Tile {
   Draw() {}
 
   ChangeDirection() {}
+
+  SetOriginalPosition() {
+    this.SetPosition(this.originalRow, this.originalCol);
+  }
 
   Update() {
     if (this.isMoving) {
@@ -161,7 +167,7 @@ class Entity extends Tile {
 
   Collide(entity) {
     var d = dist(this.pos.x, this.pos.y, entity.pos.x, entity.pos.y);
-    return d < 1 && entity.Visible;
+    return d < (this.radius + entity.radius) / 4 && entity.Visible;
   }
   //#endregion
 }

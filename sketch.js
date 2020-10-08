@@ -57,21 +57,13 @@ async function draw() {
   MoveGhosts();
 
   if (gameStatus == GAME_READY) {
-    console.log("Game ready.");
     DisplayReady();
-    await Sleep(READY_DELAY_MS);
-    gameStatus = GAME_PLAY;
-    console.log("Game started.");
-    loop();
-    for (let ghost of ghosts) {
-      ghost.SetRandomDirection();
-    }
   }
 
   CheckPacmanEatDot();
   CheckPacmanEatPowerPellet();
   CheckPacmanEatFruit();
-  // checkPacmanGhostCollision();
+  CheckPacmanGhostCollision();
   // handleGhostsVulnerability();
 
   CheckKeyIsDown();
@@ -87,15 +79,15 @@ function resetGame() {
   loop();
 }
 
-function resetRound() {
+function ResetRound() {
   print("Reset round");
-  gameStatus = GAME_PLAY;
-  currentFruit.SetVisible(false);
+  gameStatus = GAME_READY;
   currentFruit.Reset();
-  pacman.stop();
-  pacman.setLocationRowCol(PACMAN_ROW, PACMAN_COL);
+  pacman.Stop();
+  pacman.SetOriginalPosition();
   for (let ghost of ghosts) {
-    ghost.setOriginalLocation();
+    ghost.SetOriginalPosition();
+    ghost.Stop();
   }
   loop();
 }
@@ -266,14 +258,14 @@ function SetLifeTile() {
   // lifeTile = new Tile(FRUIT_ROW, FRUIT_COL, TILE_SIZE, WHITE, LIFE_SYMBOL);
 }
 
-function gameOver() {
-  gameIsOver = true;
+function GameOver() {
+  console.log("Game over");
+  gameStatus = GAME_OVER;
   DisplayGameOver();
   stats.decreaseLives();
   if (stats.lives < 0) {
     DisplayGameOver();
   }
-  noLoop();
 }
 
 function LevelCompleted() {
@@ -298,9 +290,9 @@ function DisplayMessage(msg, x, y, col, font_size) {
 }
 
 function DisplayReady() {
-  let msg_x = (MAZE_X + SCREEN_WIDTH) * 0.35;
+  let msg_x = (MAZE_X + SCREEN_WIDTH) * 0.32;
   let msg_y = SCREEN_HEIGHT * 0.71;
-  DisplayMessage("READY!", msg_x, msg_y, YELLOW, 24);
+  DisplayMessage("Press SPACE to start", msg_x, msg_y, YELLOW, 24);
 }
 
 function DisplayGameOver() {
@@ -329,6 +321,9 @@ function ResumeGame() {
   console.log("Game resumed");
   gameStatus = GAME_PLAY;
   stats.msg = "";
+  for (let ghost of ghosts) {
+    ghost.SetRandomDirection();
+  }
   loop();
 }
 
@@ -403,10 +398,11 @@ function CheckPacmanEatFruit() {
   }
 }
 
-async function checkPacmanGhostCollision() {
+function CheckPacmanGhostCollision() {
+  // asyc
   for (let ghost of ghosts) {
     if (pacman.Collide(ghost)) {
-      if (ghost.isVulnerable) {
+      if (ghost.Vulnerable) {
         let gx = ghost.pos.x;
         let gy = ghost.pos.y;
         console.log(GHOST_POINTS[eatenGhostNum]);
@@ -416,11 +412,13 @@ async function checkPacmanGhostCollision() {
         ghost.setLocationRowCol(9, 9);
         DisplayMessage(GHOST_POINTS[eatenGhostNum], gx, gy, GRAY3, 16);
         eatenGhostNum++;
-        noLoop();
-        await Sleep(DELAY_AFTER_EATING_GHOST);
-        loop();
+        // noLoop();
+        // await Sleep(DELAY_AFTER_EATING_GHOST);
+        // loop();
       } else {
-        gameOver();
+        noLoop();
+        GameOver();
+        return;
       }
     }
   }
@@ -495,8 +493,11 @@ function CheckKeyIsDown() {
 }
 
 function keyPressed() {
+  if (gameStatus == GAME_READY && key == " ") {
+    ResumeGame();
+  }
   if (gameStatus == GAME_OVER && key == " ") {
-    resetRound();
+    ResetRound();
   }
   if (gameStatus == GAME_LEVEL_COMPLETED && keyCode == ENTER) {
     setNextLevel();

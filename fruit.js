@@ -31,6 +31,7 @@ class Fruit extends Tile {
   }
 
   Reset() {
+    this.SetVisible(false);
     this.timer = 0;
   }
 }
