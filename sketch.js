@@ -223,13 +223,15 @@ function SetLifeTile() {
   // lifeTile = new Tile(FRUIT_ROW, FRUIT_COL, TILE_SIZE, WHITE, LIFE_SYMBOL);
 }
 
-function GameOver() {
-  console.log("Game over");
-  gameStatus = GAME_OVER;
-  DisplayGameOver();
+function Busted() {
+  console.log("Basted");
   stats.decreaseLives();
   if (stats.lives < 0) {
+    gameStatus = GAME_OVER;
     DisplayGameOver();
+  } else {
+    gameStatus = GAME_BUSTED;
+    DisplayBusted();
   }
 }
 
@@ -260,10 +262,17 @@ function DisplayReady() {
   DisplayMessage("Press SPACE to start", msg_x, msg_y, YELLOW, 24);
 }
 
+function DisplayBusted() {
+  let msg_x = SCREEN_WIDTH / 2 - 100;
+  let msg_y = SCREEN_HEIGHT / 2;
+  let msg = "Busted. Press SPACE to resume.";
+  DisplayMessage(msg, msg_x, msg_y, RED, 24);
+}
+
 function DisplayGameOver() {
   let msg_x = SCREEN_WIDTH / 2 - 100;
   let msg_y = SCREEN_HEIGHT / 2;
-  let msg = "Game over. Press SPACE to restart game";
+  let msg = "GAME OVER";
   DisplayMessage(msg, msg_x, msg_y, RED, 24);
 }
 
@@ -322,7 +331,7 @@ function CheckPacmanEatDot() {
     if (pacman.Collide(dots[i])) {
       let dot = dots.splice(i, 1)[0];
       stats.increaseScore(dot.Points);
-      if (dots.length == 130) {
+      if (dots.length == 0) {
         LevelCompleted();
       }
     }
@@ -376,7 +385,7 @@ async function CheckPacmanGhostCollision() {
         EatGhost(ghost);
       } else {
         noLoop();
-        GameOver();
+        Busted();
         return;
       }
     }
@@ -448,7 +457,7 @@ function keyPressed() {
   if (gameStatus == GAME_READY && key == " ") {
     ResumeGame();
   }
-  if (gameStatus == GAME_OVER && key == " ") {
+  if (gameStatus == GAME_BUSTED && key == " ") {
     ResetRound();
   }
   if (gameStatus == GAME_LEVEL_COMPLETED && keyCode == ENTER) {

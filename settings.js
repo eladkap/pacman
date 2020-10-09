@@ -80,9 +80,10 @@ const MAX_LIVES = 5;
 const GAME_READY = 0;
 const GAME_PLAY = 1;
 const GAME_LEVEL_COMPLETED = 2;
-const GAME_OVER = 3;
+const GAME_BUSTED = 3;
 const GAME_PAUSED = 4;
 const GAME_FINISHED = 5;
+const GAME_OVER = 6;
 
 const LEVEL_FILE_PATH = "levels/levels.txt";
 
