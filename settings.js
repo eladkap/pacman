@@ -14,8 +14,7 @@ const MAZE_COLS = 20;
 const MAZE_WIDTH = MAZE_ROWS * TILE_SIZE;
 const MAZE_HEIGHT = MAZE_COLS * TILE_SIZE;
 
-var LERP_UNIT = 0.2; // Linear Interpolation - Animation movement unit
-var LERP_UNIT_GHOST = 0.2;
+const LERP_UNIT = 0.2; // Linear Interpolation - Animation movement unit
 
 /* COLORS */
 const BLACK = [0, 0, 0];
@@ -69,9 +68,10 @@ const FRUIT_SHOW_DELAY = 7;
 const DELAY_AFTER_EATING_GHOST = 500;
 
 const GHOST_POINTS = [200, 400, 800, 1600];
-const GHOST_VULNERABILITY_DURATION = 8; // sec
-const GHOST_BLINKING_DURATION = 5; // sec
-const READY_DELAY_MS = 2000; // ms
+
+const GHOST_VULNERABILITY_DURATION_SEC = 8;
+const GHOST_RECOVERY_DURATION_SEC = 5;
+const READY_DELAY_MS = 2000;
 
 const STATS_HEIGHT = 200;
 const MAX_LIVES = 5;

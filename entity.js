@@ -10,8 +10,8 @@ class Entity extends Tile {
     this.direction = createVector(0, 0);
     this.maze = maze;
     this.tileType = tileType;
-    this.movingCount = 0;
-    this.isMoving = false;
+    this.lerpingCount = 0;
+    this.isLerping = false;
     this.vulnerable = false;
     this.lerpUnit = LERP_UNIT;
   }
@@ -39,8 +39,14 @@ class Entity extends Tile {
     this.SetPosition(this.originalRow, this.originalCol);
   }
 
+  ResetMovement() {
+    this.lerpingCount = 0;
+    this.isLerping = false;
+    return this.ChangeDirection();
+  }
+
   Update() {
-    if (this.isMoving) {
+    if (this.isLerping) {
       let x = lerp(
         this.pos.x,
         this.pos.x + this.direction.x * this.speed,
@@ -52,11 +58,9 @@ class Entity extends Tile {
         this.lerpUnit
       );
       this.pos.set(x, y);
-      this.movingCount++;
-      if (this.movingCount == 1 / this.lerpUnit) {
-        this.movingCount = 0;
-        this.isMoving = false;
-        this.ChangeDirection();
+      this.lerpingCount++;
+      if (this.lerpingCount == 1 / this.lerpUnit) {
+        this.ResetMovement();
       }
     }
   }
@@ -74,7 +78,7 @@ class Entity extends Tile {
     return (
       this.col > 0 &&
       this.maze.GetValue(this.row, this.col - 1) != TILE_WALL &&
-      !this.isMoving
+      !this.isLerping
     );
   }
 
@@ -83,7 +87,7 @@ class Entity extends Tile {
     return (
       this.col + 1 < this.maze.Cols - 1 &&
       this.maze.GetValue(this.row, this.col + 1) != TILE_WALL &&
-      !this.isMoving
+      !this.isLerping
     );
   }
 
@@ -92,7 +96,7 @@ class Entity extends Tile {
     return (
       this.row > 0 &&
       this.maze.GetValue(this.row - 1, this.col) != TILE_WALL &&
-      !this.isMoving
+      !this.isLerping
     );
   }
 
@@ -101,7 +105,7 @@ class Entity extends Tile {
     return (
       this.row + 1 < this.maze.Rows - 1 &&
       this.maze.GetValue(this.row + 1, this.col) != TILE_WALL &&
-      !this.isMoving
+      !this.isLerping
     );
   }
 
@@ -125,7 +129,7 @@ class Entity extends Tile {
   GoLeft() {
     if (this.CanGoLeft()) {
       this.direction.set(-1, 0);
-      this.isMoving = true;
+      this.isLerping = true;
       this.maze.SetValue(this.row, this.col, TILE_EMPTY);
       this.col--;
       this.maze.SetValue(this.row, this.col, this.tileType);
@@ -135,7 +139,7 @@ class Entity extends Tile {
   GoRight() {
     if (this.CanGoRight()) {
       this.direction.set(1, 0);
-      this.isMoving = true;
+      this.isLerping = true;
       this.maze.SetValue(this.row, this.col, TILE_EMPTY);
       this.col++;
       this.maze.SetValue(this.row, this.col, this.tileType);
@@ -145,7 +149,7 @@ class Entity extends Tile {
   GoUp() {
     if (this.CanGoUp()) {
       this.direction.set(0, -1);
-      this.isMoving = true;
+      this.isLerping = true;
       this.maze.SetValue(this.row, this.col, TILE_EMPTY);
       this.row--;
       this.maze.SetValue(this.row, this.col, this.tileType);
@@ -155,7 +159,7 @@ class Entity extends Tile {
   GoDown() {
     if (this.CanGoDown()) {
       this.direction.set(0, 1);
-      this.isMoving = true;
+      this.isLerping = true;
       this.maze.SetValue(this.row, this.col, TILE_EMPTY);
       this.row++;
       this.maze.SetValue(this.row, this.col, this.tileType);
@@ -164,6 +168,7 @@ class Entity extends Tile {
 
   Stop() {
     this.SetDirection(0, 0);
+    this.lerpingCount = 0;
   }
 
   Collide(entity) {

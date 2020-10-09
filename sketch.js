@@ -16,9 +16,6 @@ var stats;
 var maze;
 var currLevelIndex = 0;
 
-var recoveryTimer = 0;
-var recoveryMode = false;
-
 //#region Main Functions
 function LoadTileMap() {
   tileMap = ReadTextFile("tilemap.txt");
@@ -63,7 +60,6 @@ async function draw() {
   CheckPacmanEatPowerPellet();
   CheckPacmanEatFruit();
   CheckPacmanGhostCollision();
-  // handleGhostsVulnerability();
 
   CheckKeyIsDown();
 }
@@ -91,29 +87,6 @@ function ResetRound() {
   loop();
 }
 
-//todo: this function should be managed in Ghost class in Update() method
-function handleGhostsVulnerability() {
-  if (ghosts[0].isVulnerable && !recoveryMode) {
-    if (frameCount % FPS == 0) {
-      vulnerabilityTimer++;
-    }
-    if (vulnerabilityTimer >= GHOST_VULNERABILITY_DURATION) {
-      recoverGhosts();
-      vulnerabilityTimer = 0;
-    }
-  }
-  if (recoveryMode) {
-    if (frameCount % FPS == 0) {
-      recoveryTimer++;
-    }
-    if (recoveryTimer >= GHOST_BLINKING_DURATION) {
-      setGhostsInvulnerable();
-      recoveryTimer = 0;
-      recoveryMode = false;
-    }
-  }
-}
-
 //#region Draw Functions
 function DrawWalls() {
   for (let wall of walls) {
@@ -137,6 +110,7 @@ function MoveGhosts() {
   for (let ghost of ghosts) {
     ghost.Draw();
     ghost.Update();
+    ghost.UpdateState();
   }
 }
 
@@ -158,7 +132,8 @@ function SetMaze(tileMap) {
 }
 
 function ResetMaze() {
-  maze = Create(tileMap);
+  maze.Create(tileMap);
+  SetTiles();
 }
 
 function SetTiles() {
@@ -354,7 +329,7 @@ function CheckPacmanEatDot() {
     if (pacman.Collide(dots[i])) {
       let dot = dots.splice(i, 1)[0];
       stats.increaseScore(dot.Points);
-      if (dots.length == 0) {
+      if (dots.length == 140) {
         LevelCompleted();
       }
     }
@@ -372,18 +347,8 @@ function CheckPacmanEatPowerPellet() {
 }
 
 function SetGhostsVulnerable() {
-  recoveryTimer = 0;
-  recoveryMode = false;
   for (let ghost of ghosts) {
     ghost.SetVulnerable(true);
-    // ghost.setBlinking(false);
-  }
-}
-
-function setGhostsInvulnerable() {
-  for (let ghost of ghosts) {
-    ghost.setBlinking(false);
-    ghost.setVulnerable(false);
   }
 }
 
@@ -395,23 +360,27 @@ function CheckPacmanEatFruit() {
   }
 }
 
+async function EatGhost(ghost) {
+  let gx = ghost.pos.x;
+  let gy = ghost.pos.y;
+  console.log(GHOST_POINTS[eatenGhostNum]);
+  stats.increaseScore(GHOST_POINTS[eatenGhostNum]);
+  ghost.SetOriginalPosition();
+  ghost.Stop();
+  ghost.SetVulnerable(false);
+  ghost.SetRandomDirection();
+  DisplayMessage(GHOST_POINTS[eatenGhostNum], gx, gy, GRAY3, 16);
+  eatenGhostNum++;
+  noLoop();
+  await Sleep(DELAY_AFTER_EATING_GHOST);
+  loop();
+}
+
 async function CheckPacmanGhostCollision() {
-  // asyc
   for (let ghost of ghosts) {
     if (pacman.Collide(ghost)) {
       if (ghost.Vulnerable) {
-        let gx = ghost.pos.x;
-        let gy = ghost.pos.y;
-        console.log(GHOST_POINTS[eatenGhostNum]);
-        stats.increaseScore(GHOST_POINTS[eatenGhostNum]);
-        ghost.SetOriginalPosition();
-        ghost.Stop();
-        ghost.SetRandomDirection();
-        DisplayMessage(GHOST_POINTS[eatenGhostNum], gx, gy, GRAY3, 16);
-        eatenGhostNum++;
-        noLoop();
-        await Sleep(DELAY_AFTER_EATING_GHOST);
-        loop();
+        EatGhost(ghost);
       } else {
         noLoop();
         GameOver();
@@ -419,15 +388,6 @@ async function CheckPacmanGhostCollision() {
       }
     }
   }
-}
-
-function recoverGhosts() {
-  eatenGhostNum = 0;
-  for (let ghost of ghosts) {
-    // ghost.setVulnerable(false);
-    ghost.setBlinking(true);
-  }
-  recoveryMode = true;
 }
 
 function canGoRight(ghost) {
@@ -497,7 +457,7 @@ function keyPressed() {
     ResetRound();
   }
   if (gameStatus == GAME_LEVEL_COMPLETED && keyCode == ENTER) {
-    setNextLevel();
+    SetNextLevel();
   }
   if (gameStatus == GAME_PLAY && keyCode === ESCAPE) {
     PauseGame();
@@ -516,9 +476,6 @@ function keyPressed() {
     } else if (keyCode === DOWN_ARROW) {
       pacman.GoDown();
     }
-    // else if (key == " ") {
-    //   pacman.Stop();
-    // }
   }
 }
 //#endregion

@@ -2,12 +2,28 @@ class Ghost extends Entity {
   constructor(row, col, width, color, symbol, speed, maze, tileType) {
     super(row, col, width, color, symbol, speed, maze, tileType);
     this.vulnerabilityTimer = 0;
+    this.recoveryTimer = 0;
+    this.timer = 0;
+    this.recoveryMode = false;
+    this.vulnerabilityDuration = GHOST_VULNERABILITY_DURATION_SEC;
+    this.recoveryDuration = GHOST_RECOVERY_DURATION_SEC;
   }
 
   Draw() {
     noStroke();
     if (this.vulnerable) {
-      fill(NAVY);
+      if (this.recoveryMode) {
+        if (frameCount % (FPS / 2) == 0) {
+          this.timer++;
+        }
+        if (this.timer % 2 == 0) {
+          fill(NAVY);
+        } else {
+          fill(WHITE);
+        }
+      } else {
+        fill(NAVY);
+      }
       ellipse(
         this.pos.x + this.radius,
         this.pos.y + this.radius,
@@ -18,6 +34,28 @@ class Ghost extends Entity {
       fill(this.color);
       textSize(this.width * 0.6);
       text(this.symbol, this.pos.x, this.pos.y + this.width * 0.7);
+    }
+  }
+
+  UpdateState() {
+    if (this.vulnerable && !this.recoveryMode) {
+      if (frameCount % FPS == 0) {
+        this.vulnerabilityTimer++;
+      }
+      if (this.vulnerabilityTimer >= this.vulnerabilityDuration) {
+        this.recoveryMode = true;
+        this.vulnerabilityTimer = 0;
+      }
+    }
+    if (this.recoveryMode) {
+      if (frameCount % FPS == 0) {
+        this.recoveryTimer++;
+      }
+      if (this.recoveryTimer >= this.recoveryDuration) {
+        this.SetVulnerable(false);
+        this.recoveryTimer = 0;
+        this.recoveryMode = false;
+      }
     }
   }
 
@@ -45,17 +83,32 @@ class Ghost extends Entity {
   }
 
   SetVulnerable(value) {
+    // let chosenDirection = this.ResetMovement();
+    // let nextPosition = this.GetNextPosition(chosenDirection);
+    // this.SetPosition(nextPosition[0], nextPosition[1]);
     this.vulnerable = value;
-    if (value == false) {
-      // this.speed *= 2;
-      this.lerpUnit *= 2;
+    if (value == true) {
+      // this.lerpUnit /= 2;
     } else {
-      // this.speed *= 0.5;
-      // this.lerpUnit *= 0.5;
+      // this.lerpUnit *= 2;
     }
   }
 
+  GetNextPosition(chosenDirection) {
+    if (chosenDirection == "L") {
+      return [this.Row, this.Col - 1];
+    }
+    if (chosenDirection == "R") {
+      return [this.Row, this.Col + 1];
+    }
+    if (chosenDirection == "U") {
+      return [this.Row - 1, this.Col];
+    }
+    return [this.Row + 1, this.Col];
+  }
+
   ChangeDirection() {
+    // Change direction and return the next position
     var currentDirection = null;
     var oppositeDirection = null;
     if (this.direction.x < 0) {
@@ -76,8 +129,10 @@ class Ghost extends Entity {
     }
     let possibleDirections = this.GetPossibleDirections();
 
+    let chosenDirection;
     if (possibleDirections.length == 1) {
       this.GotoDirection(possibleDirections[0]);
+      chosenDirection = possibleDirections[0];
     } else {
       let index = possibleDirections.indexOf(oppositeDirection);
       possibleDirections.splice(index, 1);
@@ -85,5 +140,6 @@ class Ghost extends Entity {
       this.GotoDirection(chosenDirection);
     }
     this.isMoving = true;
+    return this.GetNextPosition(chosenDirection);
   }
 }
