@@ -1,5 +1,5 @@
 class Tile {
-  constructor(row, col, width, color, symbol) {
+  constructor(row, col, width, color, symbol, points) {
     this.row = row;
     this.col = col;
     this.pos = createVector(MAZE_X + col * width, MAZE_Y + row * width);
@@ -7,6 +7,7 @@ class Tile {
     this.radius = width / 2;
     this.color = color;
     this.symbol = symbol;
+    this.points = points;
     this.visible = true;
   }
 
@@ -33,6 +34,14 @@ class Tile {
 
   get Color() {
     return this.color;
+  }
+
+  get Points() {
+    return this.points;
+  }
+
+  get Symbol(){
+    return this.symbol;
   }
 
   get Visible() {

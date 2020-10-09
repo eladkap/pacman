@@ -1,14 +1,8 @@
 class Fruit extends Tile {
   constructor(row, col, width, color, name, symbol, points) {
-    super(row, col, width, color);
+    super(row, col, width, color,symbol,points);
     this.name = name;
-    this.symbol = symbol;
-    this.points = points;
     this.timer = 0;
-  }
-
-  get Points() {
-    return this.points;
   }
 
   Draw() {

@@ -1,6 +1,6 @@
 class Wall extends Tile {
-  constructor(row, col, width, color, symbol) {
-    super(row, col, width, color, symbol);
+  constructor(row, col, width, color, symbol, points) {
+    super(row, col, width, color, symbol, points);
   }
 
   Draw() {

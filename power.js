@@ -1,11 +1,6 @@
 class PowerPellet extends Tile {
   constructor(row, col, width, color, symbol, points) {
-    super(row, col, width, color, symbol);
-    this.points = points;
-  }
-
-  get Points() {
-    return this.points;
+    super(row, col, width, color, symbol, points);
   }
 
   Draw() {

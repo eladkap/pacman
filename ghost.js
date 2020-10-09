@@ -1,6 +1,6 @@
 class Ghost extends Entity {
-  constructor(row, col, width, color, symbol, speed, maze, tileType) {
-    super(row, col, width, color, symbol, speed, maze, tileType);
+  constructor(row, col, width, color, symbol,points, speed, maze, tileType) {
+    super(row, col, width, color, symbol, points, speed, maze, tileType);
     this.vulnerabilityTimer = 0;
     this.recoveryTimer = 0;
     this.timer = 0;

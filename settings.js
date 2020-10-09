@@ -73,6 +73,9 @@ const GHOST_VULNERABILITY_DURATION_SEC = 8;
 const GHOST_RECOVERY_DURATION_SEC = 5;
 const READY_DELAY_MS = 2000;
 
+const STATS_POS_X = 300;
+const STATS_POS_Y = 50;
+const STATS_WIDTH = 100;
 const STATS_HEIGHT = 200;
 const MAX_LIVES = 5;
 
@@ -96,17 +99,6 @@ const TILE_GHOST1 = 5;
 const TILE_GHOST2 = 6;
 const TILE_GHOST3 = 7;
 const TILE_GHOST4 = 8;
-
-// const LEVEL_START_NUM = 1;
-
-const TYPES = ["E", "W", "D", "C", "G", "P"];
-/*	E - Empty - 0
-		W - Wall - 1
-		D - Dot - 3
-		C - Cherry - 3
-		G - Ghost - 4
-		P - Pacman - 5
-*/
 
 /*
 POINTS SCORES

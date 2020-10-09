@@ -1,6 +1,6 @@
 class Pacman extends Entity {
-  constructor(row, col, width, color, symbol, speed, maze, tileType, lives) {
-    super(row, col, width, color, symbol, speed, maze, tileType);
+  constructor(row, col, width, color, symbol, points,speed, maze, tileType, lives) {
+    super(row, col, width, color, symbol, points, speed, maze, tileType);
     this.lives = lives;
   }
 

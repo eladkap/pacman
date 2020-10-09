@@ -2,8 +2,8 @@
 Entity represents moving object (pacman or ghost)
 */
 class Entity extends Tile {
-  constructor(row, col, width, color, symbol, speed, maze, tileType) {
-    super(row, col, width, color, symbol);
+  constructor(row, col, width, color, symbol, points, speed, maze, tileType) {
+    super(row, col, width, color, symbol, points);
     this.originalRow = row;
     this.originalCol = col;
     this.speed = speed;

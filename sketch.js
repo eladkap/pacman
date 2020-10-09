@@ -115,7 +115,7 @@ function DrawMaze() {
 //#endregion
 
 function setStats() {
-  stats = new Stats(200, 50, 100, STATS_HEIGHT, MAX_LIVES);
+  stats = new Stats(STATS_POS_X, STATS_POS_Y, STATS_WIDTH, STATS_HEIGHT, MAX_LIVES);
 }
 
 function SetMaze(tileMap) {
@@ -138,7 +138,7 @@ function SetTiles() {
   for (let i = 0; i < maze.Rows; i++) {
     for (let j = 0; j < maze.Cols; j++) {
       if (maze.GetValue(i, j) == TILE_WALL) {
-        let wall = new Wall(i, j, TILE_SIZE, BLUE, "#");
+        let wall = new Wall(i, j, TILE_SIZE, BLUE, "#", 0);
         walls.push(wall);
       } else if (maze.GetValue(i, j) == TILE_DOT) {
         dot = new Dot(i, j, TILE_SIZE, WHITE, ".", DOT_PTS);
@@ -152,6 +152,7 @@ function SetTiles() {
         )
       ) {
         let ghostNum = maze.GetValue(i, j);
+        let ghostIndex = 0;
         if (ghostNum == TILE_GHOST1) {
           ghostColor = RED;
           ghostSymbol = GHOST1_SYMBOL;
@@ -171,11 +172,13 @@ function SetTiles() {
           TILE_SIZE,
           ghostColor,
           ghostSymbol,
+          GHOST_POINTS[ghostIndex],
           GHOST_SPEED,
           maze,
           ghostNum
         );
         ghosts.push(ghost);
+        ghostIndex++;
       } else if (maze.GetValue(i, j) == TILE_PACMAN) {
         pacman = new Pacman(
           i,
@@ -183,6 +186,7 @@ function SetTiles() {
           TILE_SIZE,
           YELLOW,
           PACMAN_SYMBOL,
+          0,
           PACMAN_SPEED,
           maze,
           TILE_PACMAN,
@@ -263,22 +267,22 @@ function DisplayReady() {
 }
 
 function DisplayBusted() {
-  let msg_x = SCREEN_WIDTH / 2 - 100;
-  let msg_y = SCREEN_HEIGHT / 2;
+  let msg_x = (MAZE_X + SCREEN_WIDTH) * 0.32;
+  let msg_y = SCREEN_HEIGHT * 0.71;
   let msg = "Busted. Press SPACE to resume.";
   DisplayMessage(msg, msg_x, msg_y, RED, 24);
 }
 
 function DisplayGameOver() {
-  let msg_x = SCREEN_WIDTH / 2 - 100;
-  let msg_y = SCREEN_HEIGHT / 2;
+  let msg_x = (MAZE_X + SCREEN_WIDTH) * 0.32;
+  let msg_y = SCREEN_HEIGHT * 0.71;
   let msg = "GAME OVER";
   DisplayMessage(msg, msg_x, msg_y, RED, 24);
 }
 
 function DisplayPause() {
-  let msg_x = SCREEN_WIDTH / 2 - 100;
-  let msg_y = SCREEN_HEIGHT / 2;
+  let msg_x = (MAZE_X + SCREEN_WIDTH) * 0.32;
+  let msg_y = SCREEN_HEIGHT * 0.71;
   let msg = "Game is Paused. Press ESC to resume";
   DisplayMessage(msg, msg_x, msg_y, WHITE, 24);
 }
@@ -344,6 +348,7 @@ function CheckPacmanEatPowerPellet() {
       let power = powerPellets.splice(i, 1)[0];
       stats.increaseScore(power.Points);
       SetGhostsVulnerable();
+      eatenGhostNum = 0;
     }
   }
 }
@@ -373,6 +378,9 @@ async function EatGhost(ghost) {
   ghost.SetRandomDirection();
   DisplayMessage(GHOST_POINTS[eatenGhostNum], gx, gy, GRAY3, 16);
   eatenGhostNum++;
+  if (eatenGhostNum == ghosts.length) {
+    eatenGhostNum = 0;
+  }
   noLoop();
   await Sleep(DELAY_AFTER_EATING_GHOST);
   loop();

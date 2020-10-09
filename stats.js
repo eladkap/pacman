@@ -14,7 +14,6 @@ class Stats {
   reset() {
     this.score = 0;
     this.lives = MAX_LIVES;
-    //this.level = levels[0];
   }
 
   increaseScore(amount) {
@@ -22,7 +21,7 @@ class Stats {
   }
 
   decreaseLives() {
-    this.lives -= 1;
+    this.lives--;
   }
 
   SetNextLevel() {
@@ -35,7 +34,7 @@ class Stats {
     textSize(36);
     fill(255);
     text(
-      `Time: --\t\tLevel: ${this.levelNum}\t\tScore: ${this.score}\t\t Lives: ${this.lives}\t\t${currentFruit.symbol}`,
+      `Level: ${this.levelNum}\t\tScore: ${this.score}\t\t Lives: ${this.lives}\t\t${currentFruit.symbol}`,
       this.x,
       this.y
     );
