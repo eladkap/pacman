@@ -65,18 +65,10 @@ async function draw() {
 }
 //#endregion
 
-function resetGame() {
-  print("Reset game");
-  gameIsOver = false;
-  ResetMaze();
-  stats.reset();
-  pacman.stop();
-  loop();
-}
-
 function ResetRound() {
   print("Reset round");
-  gameStatus = GAME_READY;
+  // gameStatus = GAME_READY;
+  gameStatus = GAME_PLAY;
   currentFruit.Reset();
   pacman.Stop();
   pacman.SetOriginalPosition();
@@ -242,17 +234,17 @@ function GameOver() {
 }
 
 function LevelCompleted() {
+  console.log("Level completed.");
   DisplayLevelCompleted();
   gameStatus = GAME_LEVEL_COMPLETED;
+  noLoop();
 }
 
 function DisplayLevelCompleted() {
-  console.log("Level completed.");
   let msg_x = SCREEN_WIDTH * 0.3;
   let msg_y = SCREEN_HEIGHT * 0.71;
   let msg = "Level completed. Press ENTER for level " + (currLevelIndex + 2);
   DisplayMessage(msg, msg_x, msg_y, GREEN, 24);
-  noLoop();
 }
 
 function DisplayMessage(msg, x, y, col, font_size) {
@@ -307,7 +299,8 @@ function SetNextLevel() {
   } else {
     stats.SetNextLevel();
     ResetMaze();
-    gameStatus = GAME_PLAY;
+    // gameStatus = GAME_PLAY;
+    gameStatus = GAME_READY;
     currentFruit = fruits[currLevelIndex];
     loop();
     currentFruit.SetVisible(false);
@@ -329,7 +322,7 @@ function CheckPacmanEatDot() {
     if (pacman.Collide(dots[i])) {
       let dot = dots.splice(i, 1)[0];
       stats.increaseScore(dot.Points);
-      if (dots.length == 140) {
+      if (dots.length == 130) {
         LevelCompleted();
       }
     }
@@ -438,14 +431,16 @@ function moveGhosts() {
 
 //#region Keyboard Events
 function CheckKeyIsDown() {
-  if (keyIsDown(RIGHT_ARROW)) {
-    pacman.GoRight();
-  } else if (keyIsDown(LEFT_ARROW)) {
-    pacman.GoLeft();
-  } else if (keyIsDown(UP_ARROW)) {
-    pacman.GoUp();
-  } else if (keyIsDown(DOWN_ARROW)) {
-    pacman.GoDown();
+  if (gameStatus == GAME_PLAY) {
+    if (keyIsDown(RIGHT_ARROW)) {
+      pacman.GoRight();
+    } else if (keyIsDown(LEFT_ARROW)) {
+      pacman.GoLeft();
+    } else if (keyIsDown(UP_ARROW)) {
+      pacman.GoUp();
+    } else if (keyIsDown(DOWN_ARROW)) {
+      pacman.GoDown();
+    }
   }
 }
 
