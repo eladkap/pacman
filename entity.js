@@ -14,6 +14,7 @@ class Entity extends Tile {
     this.isLerping = false;
     this.vulnerable = false;
     this.lerpUnit = LERP_UNIT;
+    this.lerpUnitMult = 1;
   }
 
   //#region Properties
@@ -42,7 +43,9 @@ class Entity extends Tile {
   ResetMovement() {
     this.lerpingCount = 0;
     this.isLerping = false;
-    return this.ChangeDirection();
+    this.lerpUnit *= this.lerpUnitMult
+    this.lerpUnitMult = 1;
+    this.ChangeDirection();
   }
 
   Update() {
@@ -59,7 +62,7 @@ class Entity extends Tile {
       );
       this.pos.set(x, y);
       this.lerpingCount++;
-      if (this.lerpingCount == 1 / this.lerpUnit) {
+      if (this.lerpingCount >= 1 / this.lerpUnit) {
         this.ResetMovement();
       }
     }
@@ -74,7 +77,6 @@ class Entity extends Tile {
   }
 
   CanGoLeft() {
-    // return this.pos.x > MAZE_X && !this.isMoving;
     return (
       this.col > 0 &&
       this.maze.GetValue(this.row, this.col - 1) != TILE_WALL &&
@@ -83,7 +85,6 @@ class Entity extends Tile {
   }
 
   CanGoRight() {
-    // return this.pos.x < MAZE_X + MAZE_WIDTH - this.width && !this.isMoving;
     return (
       this.col + 1 < this.maze.Cols - 1 &&
       this.maze.GetValue(this.row, this.col + 1) != TILE_WALL &&
@@ -92,7 +93,6 @@ class Entity extends Tile {
   }
 
   CanGoUp() {
-    // return this.pos.y < MAZE_Y + MAZE_HEIGHT - this.width && !this.isMoving;
     return (
       this.row > 0 &&
       this.maze.GetValue(this.row - 1, this.col) != TILE_WALL &&
@@ -101,7 +101,6 @@ class Entity extends Tile {
   }
 
   CanGoDown() {
-    // return this.pos.y > MAZE_Y && !this.isMoving;
     return (
       this.row + 1 < this.maze.Rows - 1 &&
       this.maze.GetValue(this.row + 1, this.col) != TILE_WALL &&

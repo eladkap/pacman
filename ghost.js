@@ -43,6 +43,8 @@ class Ghost extends Entity {
     this.timer = 0;
     this.recoveryMode = false;
     this.SetVulnerable(false);
+    this.lerpUnitMult = 1;
+    this.lerpUnit = LERP_UNIT;
   }
 
   UpdateState() {
@@ -91,32 +93,15 @@ class Ghost extends Entity {
   }
 
   SetVulnerable(value) {
-    // let chosenDirection = this.ResetMovement();
-    // let nextPosition = this.GetNextPosition(chosenDirection);
-    // this.SetPosition(nextPosition[0], nextPosition[1]);
     this.vulnerable = value;
     if (value == true) {
-      // this.lerpUnit /= 2;
+      this.lerpUnitMult = 0.5;
     } else {
-      // this.lerpUnit *= 2;
+      this.lerpUnitMult = 2;
     }
-  }
-
-  GetNextPosition(chosenDirection) {
-    if (chosenDirection == "L") {
-      return [this.Row, this.Col - 1];
-    }
-    if (chosenDirection == "R") {
-      return [this.Row, this.Col + 1];
-    }
-    if (chosenDirection == "U") {
-      return [this.Row - 1, this.Col];
-    }
-    return [this.Row + 1, this.Col];
   }
 
   ChangeDirection() {
-    // Change direction and return the next position
     var currentDirection = null;
     var oppositeDirection = null;
     if (this.direction.x < 0) {
@@ -148,6 +133,5 @@ class Ghost extends Entity {
       this.GotoDirection(chosenDirection);
     }
     this.isMoving = true;
-    return this.GetNextPosition(chosenDirection);
   }
 }
