@@ -37,6 +37,14 @@ class Ghost extends Entity {
     }
   }
 
+  Reset(){
+    this.vulnerabilityTimer = 0;
+    this.recoveryTimer = 0;
+    this.timer = 0;
+    this.recoveryMode = false;
+    this.SetVulnerable(false);
+  }
+
   UpdateState() {
     if (this.vulnerable && !this.recoveryMode) {
       if (frameCount % FPS == 0) {

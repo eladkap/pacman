@@ -43,6 +43,8 @@ const PACMAN_COL = 9;
 const DOT_PTS = 10;
 const POWER_PTS = 50;
 
+const POINTS_FONT_SIZE = 16;
+
 /* Tile Symbols */
 const PACMAN_SYMBOL = "🙂";
 const GHOST1_SYMBOL = "👽";

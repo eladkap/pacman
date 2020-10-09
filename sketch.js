@@ -67,13 +67,13 @@ async function draw() {
 
 function ResetRound() {
   print("Reset round");
-  // gameStatus = GAME_READY;
   gameStatus = GAME_PLAY;
   currentFruit.Reset();
   pacman.Stop();
   pacman.SetOriginalPosition();
   for (let ghost of ghosts) {
     ghost.SetOriginalPosition();
+    ghost.Reset();
     ghost.Stop();
   }
   loop();
@@ -376,7 +376,7 @@ async function EatGhost(ghost) {
   ghost.Stop();
   ghost.SetVulnerable(false);
   ghost.SetRandomDirection();
-  DisplayMessage(GHOST_POINTS[eatenGhostNum], gx, gy, GRAY3, 16);
+  DisplayMessage(GHOST_POINTS[eatenGhostNum], gx, gy, WHITE, POINTS_FONT_SIZE);
   eatenGhostNum++;
   if (eatenGhostNum == ghosts.length) {
     eatenGhostNum = 0;
