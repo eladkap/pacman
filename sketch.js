@@ -62,8 +62,14 @@ async function draw() {
   CheckPacmanGhostCollision();
 
   CheckKeyIsDown();
+
+  DrawGameSignature();
 }
 //#endregion
+
+function DrawGameSignature(){
+  DisplayMessage("Deveolped by Elad Kapuza 2020", MAZE_X, SCREEN_HEIGHT + STATS_HEIGHT - TILE_SIZE/2, WHITE, 24);
+}
 
 function ResetRound() {
   print("Reset round");
@@ -283,7 +289,7 @@ function DisplayGameOver() {
 function DisplayPause() {
   let msg_x = (MAZE_X + SCREEN_WIDTH) * 0.32;
   let msg_y = SCREEN_HEIGHT * 0.71;
-  let msg = "Game is Paused. Press ESC to resume";
+  let msg = "Game is Paused";
   DisplayMessage(msg, msg_x, msg_y, WHITE, 24);
 }
 
