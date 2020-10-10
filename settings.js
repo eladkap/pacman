@@ -122,7 +122,7 @@ const READY_DELAY_MS = 2000;
 
 const LEVEL_FILE_PATH = "levels/levels.txt";
 
-const DEBUG_FLAG = true;
+const DEBUG_FLAG = false;
 
 
 /*
