@@ -1,6 +1,6 @@
 # Pacman
 
-Remake of Pacman Game - JavaScript application
+Remake of [Pacman Game](https://en.wikipedia.org/wiki/Pac-Man) - JavaScript application
 
 ### Technologies
 
