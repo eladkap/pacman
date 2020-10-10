@@ -9,16 +9,18 @@ class Pacman extends Entity {
   }
 
   Draw() {
-    noStroke();
-    fill(this.color);
-    textSize(this.width * 0.6);
-    text(this.symbol, this.pos.x, this.pos.y + this.width * 0.7);
-    // ellipse(
-    //   this.pos.x + this.radius,
-    //   this.pos.y + this.radius,
-    //   0.7 * this.width,
-    //   0.7 * this.width
-    // );
+    if (this.visible){
+      noStroke();
+      fill(this.color);
+      textSize(this.width * 0.6);
+      text(this.symbol, this.pos.x, this.pos.y + this.width * 0.7);
+      // ellipse(
+      //   this.pos.x + this.radius,
+      //   this.pos.y + this.radius,
+      //   0.7 * this.width,
+      //   0.7 * this.width
+      // );
+    }
   }
 
   IncrementLives() {

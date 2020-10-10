@@ -55,6 +55,12 @@ async function draw() {
   if (gameStatus == GAME_READY) {
     DisplayReady();
   }
+  if (gameStatus == GAME_PAUSED){
+    DisplayPause();
+  }
+  if (gameStatus == GAME_BUSTED){
+    DisplayBusted();
+  }
 
   CheckPacmanEatDot();
   CheckPacmanEatPowerPellet();
@@ -68,13 +74,14 @@ async function draw() {
 //#endregion
 
 function DrawGameSignature(){
-  DisplayMessage("Deveolped by Elad Kapuza 2020", MAZE_X, SCREEN_HEIGHT + STATS_HEIGHT - TILE_SIZE/2, WHITE, 24);
+  DisplayMessage("Deveolped by Elad Kapuza 2020", MAZE_X, SCREEN_HEIGHT + STATS_HEIGHT - TILE_SIZE/2, WHITE, MESSAGE_FONT_SIZE2);
 }
 
 function ResetRound() {
-  print("Reset round");
+  ConsoleLog("Reset round");
   gameStatus = GAME_PLAY;
   currentFruit.Reset();
+  SetWallsColor(BLUE);
   pacman.Stop();
   pacman.SetOriginalPosition();
   for (let ghost of ghosts) {
@@ -234,8 +241,9 @@ function SetLifeTile() {
 }
 
 function Busted() {
-  console.log("Basted");
+  ConsoleLog("Busted");
   stats.decreaseLives();
+  SetWallsColor(DARK_BLUE);
   if (stats.lives < 0) {
     gameStatus = GAME_OVER;
     DisplayGameOver();
@@ -243,68 +251,80 @@ function Busted() {
     gameStatus = GAME_BUSTED;
     DisplayBusted();
   }
+  noLoop();
 }
 
 function LevelCompleted() {
-  console.log("Level completed.");
+  ConsoleLog("Level completed.");
   DisplayLevelCompleted();
   gameStatus = GAME_LEVEL_COMPLETED;
   noLoop();
+}
+
+function SetWallsColor(color){
+  for (let wall of walls){
+    wall.SetColor(color);
+  }
 }
 
 function DisplayLevelCompleted() {
   let msg_x = SCREEN_WIDTH * 0.3;
   let msg_y = SCREEN_HEIGHT * 0.71;
   let msg = "Level completed. Press ENTER for level " + (currLevelIndex + 2);
-  DisplayMessage(msg, msg_x, msg_y, GREEN, 24);
+  DisplayMessage(msg, msg_x, msg_y, GREEN, MESSAGE_FONT_SIZE2);
 }
 
 function DisplayMessage(msg, x, y, col, font_size) {
   fill(col);
   textSize(font_size);
-  textFont(BOLD);
+  textFont(FONT_FAMILY);
+  textStyle(NORMAL);
   text(msg, x, y);
 }
 
 function DisplayReady() {
-  let msg_x = (MAZE_X + SCREEN_WIDTH) * 0.32;
+  let msg_x = (MAZE_X + SCREEN_WIDTH) * 0.3;
   let msg_y = SCREEN_HEIGHT * 0.71;
-  DisplayMessage("Press SPACE to start", msg_x, msg_y, YELLOW, 24);
+  DisplayMessage("Press SPACE to start", msg_x, msg_y, YELLOW, MESSAGE_FONT_SIZE2);
 }
 
 function DisplayBusted() {
   let msg_x = (MAZE_X + SCREEN_WIDTH) * 0.32;
-  let msg_y = SCREEN_HEIGHT * 0.71;
-  let msg = "Busted. Press SPACE to resume.";
-  DisplayMessage(msg, msg_x, msg_y, RED, 24);
+  let msg_y = SCREEN_HEIGHT * 0.58;
+  let msg = "Busted!";
+  DisplayMessage(msg, msg_x, msg_y, RED, MESSAGE_FONT_SIZE);
+  msg_x = (MAZE_X + SCREEN_WIDTH) * 0.3;
+  msg_y = SCREEN_HEIGHT * 0.71;
+  msg = "Press SPACE to restart.";
+  DisplayMessage(msg, msg_x, msg_y, WHITE, MESSAGE_FONT_SIZE2);
 }
 
 function DisplayGameOver() {
-  let msg_x = (MAZE_X + SCREEN_WIDTH) * 0.32;
-  let msg_y = SCREEN_HEIGHT * 0.71;
+  let msg_x = (MAZE_X + SCREEN_WIDTH) * 0.3;
+  let msg_y = SCREEN_HEIGHT * 0.58;
   let msg = "GAME OVER";
-  DisplayMessage(msg, msg_x, msg_y, RED, 24);
+  DisplayMessage(msg, msg_x, msg_y, RED, MESSAGE_FONT_SIZE);
 }
 
 function DisplayPause() {
-  let msg_x = (MAZE_X + SCREEN_WIDTH) * 0.32;
-  let msg_y = SCREEN_HEIGHT * 0.71;
-  let msg = "Game is Paused";
-  DisplayMessage(msg, msg_x, msg_y, WHITE, 24);
+  let msg_x = (MAZE_X + SCREEN_WIDTH) * 0.28;
+  let msg_y = SCREEN_HEIGHT * 0.7;
+  let msg = "Game Paused";
+  DisplayMessage(msg, msg_x, msg_y, WHITE, MESSAGE_FONT_SIZE);
 }
 
 function PauseGame() {
-  console.log("Game paused.");
+  ConsoleLog("Game paused.");
   gameStatus = GAME_PAUSED;
-  stats.msg = "Game is Paused";
+  SetWallsColor(DARK_BLUE);
   DisplayPause();
   noLoop();
 }
 
 function ResumeGame() {
-  console.log("Game resumed");
+  ConsoleLog("Game resumed");
   gameStatus = GAME_PLAY;
-  stats.msg = "";
+  SetWallsColor(BLUE);
   for (let ghost of ghosts) {
     ghost.SetRandomDirection();
   }
@@ -332,7 +352,7 @@ function finishGame() {
   let msg_y = SCREEN_HEIGHT / 2;
   let msg = "Game Finished";
   gameStatus = GAME_FINISHED;
-  DisplayMessage(msg, msg_x, msg_y, GREEN, 24);
+  DisplayMessage(msg, msg_x, msg_y, GREEN, MESSAGE_FONT_SIZE2);
   noLoop();
 }
 
@@ -376,12 +396,13 @@ function CheckPacmanEatFruit() {
 async function EatGhost(ghost) {
   let gx = ghost.pos.x;
   let gy = ghost.pos.y;
-  console.log(GHOST_POINTS[eatenGhostNum]);
+  ConsoleLog(GHOST_POINTS[eatenGhostNum])
   stats.increaseScore(GHOST_POINTS[eatenGhostNum]);
   ghost.SetOriginalPosition();
   ghost.Stop();
   ghost.SetVulnerable(false);
   ghost.SetRandomDirection();
+  ghost.SetVisible(false);
   DisplayMessage(GHOST_POINTS[eatenGhostNum], gx, gy, WHITE, POINTS_FONT_SIZE);
   eatenGhostNum++;
   if (eatenGhostNum == ghosts.length) {
@@ -389,6 +410,7 @@ async function EatGhost(ghost) {
   }
   noLoop();
   await Sleep(DELAY_AFTER_EATING_GHOST);
+  ghost.SetVisible(true);
   loop();
 }
 
@@ -398,7 +420,6 @@ async function CheckPacmanGhostCollision() {
       if (ghost.Vulnerable) {
         EatGhost(ghost);
       } else {
-        noLoop();
         Busted();
         return;
       }
@@ -406,51 +427,6 @@ async function CheckPacmanGhostCollision() {
   }
 }
 
-function canGoRight(ghost) {
-  return (
-    ghost.j + 1 < MAZE_COLS && level.matrix[ghost.i][ghost.j + 1] != TILE_WALL
-  );
-}
-
-function canGoLeft(ghost) {
-  return ghost.j - 1 > 0 && level.matrix[ghost.i][ghost.j - 1] != TILE_WALL;
-}
-
-function canGoUp(ghost) {
-  return ghost.i - 1 > 0 && level.matrix[ghost.i - 1][ghost.j] != TILE_WALL;
-}
-
-function canGoDown(ghost) {
-  return (
-    ghost.j + 1 < MAZE_ROWS && level.matrix[ghost.i + 1][ghost.j] != TILE_WALL
-  );
-}
-
-// Ghost AI
-function moveGhost(ghost) {
-  if (frameCount % (FPS * 2) == 0) {
-    var path = findPath(ghost.mat, ghost.i, ghost.j, pacman.i, pacman.j);
-    // console.log(path);
-    if (path.length > 0) {
-      let nextDirection = path[0];
-      if (nextDirection == "R") {
-        ghost.goRight();
-      } else if (nextDirection == "L") {
-        ghost.goLeft();
-      } else if (nextDirection == "U") {
-        ghost.goUp();
-      } else {
-        ghost.goDown();
-      }
-    }
-  }
-}
-
-function moveGhosts() {
-  for (let ghost of ghosts) {
-    moveGhost(ghost);
-  }
-}
 
 //#region Keyboard Events
 function CheckKeyIsDown() {

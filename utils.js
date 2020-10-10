@@ -6,3 +6,9 @@ function ReadTextFile(txtFile) {
   var allText = loadStrings(txtFile);
   return allText;
 }
+
+function ConsoleLog(msg){
+  if (DEBUG_FLAG){
+    console.log(msg);
+  }
+}

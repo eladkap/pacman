@@ -10,30 +10,32 @@ class Ghost extends Entity {
   }
 
   Draw() {
-    noStroke();
-    if (this.vulnerable) {
-      if (this.recoveryMode) {
-        if (frameCount % (FPS / 2) == 0) {
-          this.timer++;
-        }
-        if (this.timer % 2 == 0) {
-          fill(NAVY);
+    if (this.visible){
+      noStroke();
+      if (this.vulnerable) {
+        if (this.recoveryMode) {
+          if (frameCount % (FPS / 2) == 0) {
+            this.timer++;
+          }
+          if (this.timer % 2 == 0) {
+            fill(NAVY);
+          } else {
+            fill(WHITE);
+          }
         } else {
-          fill(WHITE);
+          fill(NAVY);
         }
+        ellipse(
+          this.pos.x + this.radius,
+          this.pos.y + this.radius,
+          0.7 * this.width,
+          0.7 * this.width
+        );
       } else {
-        fill(NAVY);
+        fill(this.color);
+        textSize(this.width * 0.6);
+        text(this.symbol, this.pos.x, this.pos.y + this.width * 0.7);
       }
-      ellipse(
-        this.pos.x + this.radius,
-        this.pos.y + this.radius,
-        0.7 * this.width,
-        0.7 * this.width
-      );
-    } else {
-      fill(this.color);
-      textSize(this.width * 0.6);
-      text(this.symbol, this.pos.x, this.pos.y + this.width * 0.7);
     }
   }
 
@@ -43,8 +45,6 @@ class Ghost extends Entity {
     this.timer = 0;
     this.recoveryMode = false;
     this.SetVulnerable(false);
-    // this.lerpMode = 1;
-    // this.lerpUnit = LERP_UNIT_NORMAL;
   }
 
   UpdateState() {

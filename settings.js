@@ -1,3 +1,4 @@
+/* Screen settings */
 const SCREEN_WIDTH = 1400;
 const SCREEN_HEIGHT = 960;
 
@@ -5,6 +6,7 @@ const FPS = 30;
 
 const TILE_SIZE = 50;
 
+/* Maze settings */
 const MAZE_X = 100;
 const MAZE_Y = 100;
 
@@ -14,7 +16,7 @@ const MAZE_COLS = 20;
 const MAZE_WIDTH = MAZE_ROWS * TILE_SIZE;
 const MAZE_HEIGHT = MAZE_COLS * TILE_SIZE;
 
-// Linear Interpolation - Animation movement unit
+// LERP settings - Linear Interpolation - Animation movement unit
 const LERP_UNIT_NORMAL = 0.2;
 const LERP_UNIT_SLOW = 0.1;
 
@@ -37,18 +39,33 @@ const AQUA = [100, 255, 255];
 const BLUE = [0, 0, 250];
 const PURPLE = [200, 0, 250];
 const NAVY = [0, 0, 128];
+const DARK_BLUE = [0, 0, 64];
 
+/* Pacman settings */
 const PACMAN_RADIUS = TILE_SIZE / 2;
-
 const PACMAN_SPEED = 1 * TILE_SIZE;
-const GHOST_SPEED = 1 * TILE_SIZE;
+
 const PACMAN_ROW = 15;
 const PACMAN_COL = 9;
 
+const MAX_LIVES = 5;
+
+/* Ghost */
+const GHOST_SPEED = 1 * TILE_SIZE;
+const DELAY_AFTER_EATING_GHOST = 500;
+const GHOST_VULNERABILITY_DURATION_SEC = 8;
+const GHOST_RECOVERY_DURATION_SEC = 5;
+
+/* Points */
 const DOT_PTS = 10;
 const POWER_PTS = 50;
+const GHOST_POINTS = [200, 400, 800, 1600];
 
-const POINTS_FONT_SIZE = 16;
+/* Fonts */
+const POINTS_FONT_SIZE = 18;
+const FONT_FAMILY = "College";
+const MESSAGE_FONT_SIZE = 64;
+const MESSAGE_FONT_SIZE2 = 24;
 
 /* Tile Symbols */
 const PACMAN_SYMBOL = "🙂";
@@ -59,6 +76,17 @@ const GHOST4_SYMBOL = "😈";
 const LIFE_SYMBOL = "❤️";
 const STOP_GHOSTS_SYMBOL = "🛑";
 
+const TILE_EMPTY = 0;
+const TILE_WALL = 1;
+const TILE_DOT = 2;
+const TILE_POWER = 3;
+const TILE_PACMAN = 4;
+const TILE_GHOST1 = 5;
+const TILE_GHOST2 = 6;
+const TILE_GHOST3 = 7;
+const TILE_GHOST4 = 8;
+
+/* Fruit settings */
 const FRUIT_DICT = [
   { symbol: "🍒", name: "Cherry", points: 100 },
   { symbol: "🍓", name: "Strawberry", points: 300 },
@@ -72,19 +100,14 @@ const FRUIT_DICT = [
 const FRUIT_ROW = 11;
 const FRUIT_COL = 9;
 const FRUIT_SHOW_DELAY = 7;
-const DELAY_AFTER_EATING_GHOST = 500;
 
-const GHOST_POINTS = [200, 400, 800, 1600];
 
-const GHOST_VULNERABILITY_DURATION_SEC = 8;
-const GHOST_RECOVERY_DURATION_SEC = 5;
-const READY_DELAY_MS = 2000;
-
+/* Stats settings */
 const STATS_POS_X = 300;
 const STATS_POS_Y = 50;
 const STATS_WIDTH = 100;
 const STATS_HEIGHT = 200;
-const MAX_LIVES = 5;
+
 
 /* Game States */
 const GAME_READY = 0;
@@ -95,17 +118,12 @@ const GAME_PAUSED = 4;
 const GAME_FINISHED = 5;
 const GAME_OVER = 6;
 
+const READY_DELAY_MS = 2000;
+
 const LEVEL_FILE_PATH = "levels/levels.txt";
 
-const TILE_EMPTY = 0;
-const TILE_WALL = 1;
-const TILE_DOT = 2;
-const TILE_POWER = 3;
-const TILE_PACMAN = 4;
-const TILE_GHOST1 = 5;
-const TILE_GHOST2 = 6;
-const TILE_GHOST3 = 7;
-const TILE_GHOST4 = 8;
+const DEBUG_FLAG = false;
+
 
 /*
 POINTS SCORES

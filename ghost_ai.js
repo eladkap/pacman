@@ -98,16 +98,4 @@ function findPath(mat, src_pos_i, src_pos_j, dest_pos_i, dest_pos_j) {
   return directions_path;
 }
 
-/*
-function copyMatrix(mat){
-  var new_mat = [];
-  for (let i = 0; i < mat.length; i++){
-    var row = [];
-    for (let j = 0; j < mat[i].length; j++){
-      row.push(mat[i][j]);
-    }
-    mat.push(row);
-  }
-  return new_mat;
-}
-*/
+

@@ -8,7 +8,6 @@ class Stats {
     this.totalScore = 0;
     this.lives = lives;
     this.levelNum = 1;
-    this.msg = "-";
   }
 
   reset() {
@@ -32,7 +31,9 @@ class Stats {
   draw() {
     noStroke();
     textSize(36);
-    fill(255);
+    textFont(FONT_FAMILY);
+    textStyle(NORMAL);
+    fill(WHITE);
     text(
       `Level: ${this.levelNum}\t\tScore: ${this.score}\t\t Lives: ${this.lives}\t\t${currentFruit.symbol}`,
       this.x,
