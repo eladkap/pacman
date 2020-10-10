@@ -335,17 +335,15 @@ function ResumeGame() {
 function SetNextLevel() {
   currLevelIndex++;
   if (currLevelIndex == fruits.length) {
-    finishGame();
-  } else {
-    stats.SetNextLevel();
-    ResetMaze();
-    // gameStatus = GAME_PLAY;
-    gameStatus = GAME_READY;
-    currentFruit = fruits[currLevelIndex];
-    loop();
-    currentFruit.SetVisible(false);
-    currentFruit.Reset();
+    currLevelIndex = fruits.length - 1;
   }
+  stats.SetNextLevel();
+  ResetMaze();
+  gameStatus = GAME_READY;
+  currentFruit = fruits[currLevelIndex];
+  loop();
+  currentFruit.SetVisible(false);
+  currentFruit.Reset();
 }
 
 function finishGame() {

@@ -133,7 +133,6 @@ class Entity extends Tile {
   CheckTunnel(){
     // Go left inside tunnel
     if (this.tileType == TILE_PACMAN && this.col == 0) {
-      console.log('left tunnel');
       this.maze.SetValue(this.row, this.col, TILE_EMPTY);
       this.maze.SetValue(this.row, this.maze.Cols - 1, this.tileType);
       this.SetPosition(this.row, this.maze.Cols - 1);
@@ -141,7 +140,6 @@ class Entity extends Tile {
 
     // Go right inside tunnel
     else if (this.tileType == TILE_PACMAN && this.col == this.maze.Cols - 1) {
-      console.log('right tunnel');
       this.maze.SetValue(this.row, this.col, TILE_EMPTY);
       this.maze.SetValue(this.row, 0, this.tileType);
       this.SetPosition(this.row, 0);
