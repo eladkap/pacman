@@ -4,13 +4,14 @@ Remake of [Pacman Game](https://en.wikipedia.org/wiki/Pac-Man) - JavaScript appl
 
 ### Technologies
 
-- P5.js (Open source)
+- p5.js (Open source)
 - Object Oriented Programming
-- Backtracking
+- Movement and collision physics
 
 ### More Features to Come
 
 - Ghosts AI - make ghosts be more wise in chasing pacman
+- Enhancing pacman capabilities
 - More maze levels
 
 ### Launch
