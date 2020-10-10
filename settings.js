@@ -62,7 +62,7 @@ const POWER_PTS = 50;
 const GHOST_POINTS = [200, 400, 800, 1600];
 
 /* Fonts */
-const POINTS_FONT_SIZE = 18;
+const POINTS_FONT_SIZE = 20;
 const FONT_FAMILY = "College";
 const MESSAGE_FONT_SIZE = 64;
 const MESSAGE_FONT_SIZE2 = 24;

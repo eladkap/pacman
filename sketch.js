@@ -38,7 +38,7 @@ function setup() {
 }
 
 async function draw() {
-  background(0);
+  background(BLACK);
   DrawMaze();
   stats.draw();
   currentFruit.Draw();
@@ -62,6 +62,7 @@ async function draw() {
     DisplayBusted();
   }
 
+  
   CheckPacmanEatDot();
   CheckPacmanEatPowerPellet();
   CheckPacmanEatFruit();
@@ -394,24 +395,27 @@ function CheckPacmanEatFruit() {
 }
 
 async function EatGhost(ghost) {
+  ConsoleLog(GHOST_POINTS[eatenGhostNum]);
+  ghost.SetVisible(false);
+  
   let gx = ghost.pos.x;
   let gy = ghost.pos.y;
-  ConsoleLog(GHOST_POINTS[eatenGhostNum])
   stats.increaseScore(GHOST_POINTS[eatenGhostNum]);
   ghost.SetOriginalPosition();
   ghost.Stop();
   ghost.SetVulnerable(false);
   ghost.SetRandomDirection();
-  ghost.SetVisible(false);
+  
   DisplayMessage(GHOST_POINTS[eatenGhostNum], gx, gy, WHITE, POINTS_FONT_SIZE);
   eatenGhostNum++;
   if (eatenGhostNum == ghosts.length) {
     eatenGhostNum = 0;
   }
+
   noLoop();
   await Sleep(DELAY_AFTER_EATING_GHOST);
-  ghost.SetVisible(true);
   loop();
+  ghost.SetVisible(true);
 }
 
 async function CheckPacmanGhostCollision() {

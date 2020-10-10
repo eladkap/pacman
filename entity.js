@@ -49,8 +49,8 @@ class Entity extends Tile {
     else {
       this.lerpUnit = LERP_UNIT_NORMAL;
     }
-    // this.lerpUnitMult = 1;
     this.ChangeDirection();
+    this.CheckTunnel();
   }
 
   Update() {
@@ -91,7 +91,7 @@ class Entity extends Tile {
 
   CanGoRight() {
     return (
-      this.col + 1 < this.maze.Cols - 1 &&
+      this.col + 1 < this.maze.Cols &&
       this.maze.GetValue(this.row, this.col + 1) != TILE_WALL &&
       !this.isLerping
     );
@@ -107,7 +107,7 @@ class Entity extends Tile {
 
   CanGoDown() {
     return (
-      this.row + 1 < this.maze.Rows - 1 &&
+      this.row + 1 < this.maze.Rows &&
       this.maze.GetValue(this.row + 1, this.col) != TILE_WALL &&
       !this.isLerping
     );
@@ -127,6 +127,24 @@ class Entity extends Tile {
       default:
         this.GoDown();
         break;
+    }
+  }
+
+  CheckTunnel(){
+    // Go left inside tunnel
+    if (this.tileType == TILE_PACMAN && this.col == 0) {
+      console.log('left tunnel');
+      this.maze.SetValue(this.row, this.col, TILE_EMPTY);
+      this.maze.SetValue(this.row, this.maze.Cols - 1, this.tileType);
+      this.SetPosition(this.row, this.maze.Cols - 1);
+    }
+
+    // Go right inside tunnel
+    else if (this.tileType == TILE_PACMAN && this.col == this.maze.Cols - 1) {
+      console.log('right tunnel');
+      this.maze.SetValue(this.row, this.col, TILE_EMPTY);
+      this.maze.SetValue(this.row, 0, this.tileType);
+      this.SetPosition(this.row, 0);
     }
   }
 
