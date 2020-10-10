@@ -43,8 +43,8 @@ class Ghost extends Entity {
     this.timer = 0;
     this.recoveryMode = false;
     this.SetVulnerable(false);
-    this.lerpUnitMult = 1;
-    this.lerpUnit = LERP_UNIT;
+    // this.lerpMode = 1;
+    // this.lerpUnit = LERP_UNIT_NORMAL;
   }
 
   UpdateState() {
@@ -95,9 +95,11 @@ class Ghost extends Entity {
   SetVulnerable(value) {
     this.vulnerable = value;
     if (value == true) {
-      this.lerpUnitMult = 0.5;
+      // Set speed to slow
+      this.lerpMode = LERP_MODE_SLOW;
     } else {
-      this.lerpUnitMult = 2;
+      // Set speed to normal
+      this.lerpMode = LERP_MODE_NORMAL;
     }
   }
 

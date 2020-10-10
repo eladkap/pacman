@@ -13,8 +13,8 @@ class Entity extends Tile {
     this.lerpingCount = 0;
     this.isLerping = false;
     this.vulnerable = false;
-    this.lerpUnit = LERP_UNIT;
-    this.lerpUnitMult = 1;
+    this.lerpUnit = LERP_UNIT_NORMAL;
+    this.lerpMode = LERP_MODE_NORMAL;
   }
 
   //#region Properties
@@ -43,8 +43,13 @@ class Entity extends Tile {
   ResetMovement() {
     this.lerpingCount = 0;
     this.isLerping = false;
-    this.lerpUnit *= this.lerpUnitMult
-    this.lerpUnitMult = 1;
+    if (this.lerpMode == LERP_MODE_SLOW){
+      this.lerpUnit = LERP_UNIT_SLOW;
+    }
+    else {
+      this.lerpUnit = LERP_UNIT_NORMAL;
+    }
+    // this.lerpUnitMult = 1;
     this.ChangeDirection();
   }
 

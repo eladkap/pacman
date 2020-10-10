@@ -14,7 +14,12 @@ const MAZE_COLS = 20;
 const MAZE_WIDTH = MAZE_ROWS * TILE_SIZE;
 const MAZE_HEIGHT = MAZE_COLS * TILE_SIZE;
 
-const LERP_UNIT = 0.2; // Linear Interpolation - Animation movement unit
+// Linear Interpolation - Animation movement unit
+const LERP_UNIT_NORMAL = 0.2;
+const LERP_UNIT_SLOW = 0.1;
+
+const LERP_MODE_NORMAL = 1;
+const LERP_MODE_SLOW = 2;
 
 /* COLORS */
 const BLACK = [0, 0, 0];
